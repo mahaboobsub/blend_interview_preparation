@@ -2674,6 +2674,149 @@ window.QUESTIONS_DATA = [
     "id": 243
   },
   {
+    "category": "devops_projects",
+    "subcategory": "BloodBridge AI",
+    "question": "Why did you choose FastAPI over Node.js for the backend in this project?",
+    "answer": "FastAPI was chosen because the core capabilities of our system are Python-heavy:\n* **Machine Learning & Analytics**: We are running XGBoost classifiers for donor churn risk, regression for patient urgency scoring, and Scipy's Hungarian algorithm for matching optimization. Running this in Node.js would require spawning a subprocess or communicating with a Python sidecar.\n* **LangGraph Agentic Workflow**: The state-driven orchestration framework is Python-native.\n* **Low Latency & Async**: FastAPI handles highly concurrent, asynchronous requests natively using uvicorn, which is critical for real-time WebSocket broadcasting and webhook ingestion. Adding Node.js would introduce structural overhead without any performance benefit.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": "",
+    "id": 244
+  },
+  {
+    "category": "devops_projects",
+    "subcategory": "BloodBridge AI",
+    "question": "How did you implement real-time updates for the frontend dashboard?",
+    "answer": "We built a centralized ConnectionManager class to manage active WebSocket connections.\n* **Node-Level Broadcasting**: To make the agent actions visual, we created a Python decorator named `@broadcast_agent_node`.\n* Every time a LangGraph node executes, the decorator broadcasts `agent_node_started` and `agent_node_completed` payloads containing the duration in milliseconds, node label, and status.\n* The React dashboard receives these events over the `/ws/emergency` channel and updates the visual overlay in real-time.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": "",
+    "id": 245
+  },
+  {
+    "category": "devops_projects",
+    "subcategory": "BloodBridge AI",
+    "question": "Why did you use a dual-database model (PostgreSQL + Neo4j)?",
+    "answer": "Each database handles what it does best:\n* **Supabase PostgreSQL**: Excellent for relational tables, transactions, strict schemas (like donor demographics, calendars, consent logs), and JWT authentication.\n* **Neo4j Aura (Graph DB)**: Relational databases struggle with many-to-many relationships across multiple attributes. Matching 500 donors with 50 patients across 8 antigen attributes results in a 25,000 combination join operation. In Neo4j, we pre-calculate compatibility edges (`COMPATIBLE_WITH`) at onboarding. Finding the top 8 compatible donors within a geographic radius is simplified into a Cypher traversal that runs in under 100ms.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": "",
+    "id": 246
+  },
+  {
+    "category": "devops_projects",
+    "subcategory": "BloodBridge AI",
+    "question": "How is database synchronization handled between PostgreSQL and Neo4j?",
+    "answer": "To prevent data drift, we mirror primary keys (`donor_id`, `patient_id`) across both databases.\n* When a donor registers, the profile is written to Supabase and a corresponding `(:Donor)` node is merged in Neo4j.\n* We run a background task to compute the 8-antigen compatibility score against all active patients. For each match exceeding a score of 0.60, we create a `[:COMPATIBLE_WITH]` edge in Neo4j.\n* During active emergencies, when a donor is selected, we create an `[:IN_CHAIN]` edge in Neo4j and a mirror record in the `blood_chains` table in Supabase. Supabase acts as the transactional ledger while Neo4j maintains the spatial-structural representation.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": "",
+    "id": 247
+  },
+  {
+    "category": "devops_projects",
+    "subcategory": "BloodBridge AI",
+    "question": "How does the 14-Agent system manage state and recover from failures?",
+    "answer": "We define a shared `AgentState` struct utilizing LangGraph's typing. State is passed sequentially through nodes:\n* **Parallel Execution**: The AntigenScoringAgent and UrgencyScoringAgent run in parallel to minimize pipeline latency.\n* **Conditional Routing**: The graph routes to the ConflictResolverAgent only if a rare donor is selected in the top-3 chains of two separate critical patients.\n* **State Checkpointing**: The graph is compiled with a memory checkpointer. If the ChainMonitorAgent detects a donor node failure (time-out after 7 minutes or explicit decline), it updates the state and routes to the ChainRepairAgent which swaps in the next best donor and triggers outreach automatically.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": "",
+    "id": 248
+  },
+  {
+    "category": "devops_projects",
+    "subcategory": "BloodBridge AI",
+    "question": "How does the hybrid Telegram webhook routing work?",
+    "answer": "To prevent LLM hallucinations from corrupting the state of active coordination chains, we built a hybrid handler in the webhook route:\n* **Deterministic Branch**: If a user is registered in the database as currently `ALERTED` in a blood chain and their text input is a simple confirmation keyword (yes, no, haan, kadu), we bypass the LLM entirely and run a deterministic state update.\n* **Agentic Branch**: For conversational replies, questions, or profile registrations, the message is sent to a LangGraph ReAct agent that evaluates the text and calls registered tools (such as checking matching status or updating consent).",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": "",
+    "id": 249
+  },
+  {
+    "category": "devops_projects",
+    "subcategory": "BloodBridge AI",
+    "question": "Explain the clinical logic behind the 8-Antigen Matching Engine.",
+    "answer": "Thalassemia Major patients receive blood transfusions for life. Over time, their immune systems develop allo-antibodies against minor blood antigens. If they receive blood with these antigens, they can suffer Delayed Hemolytic Transfusion Reactions. We implement an ISBT-weighted compatibility scorer:\n* ABO mismatch = 0.0 score (immediate block).\n* Kell mismatch = -0.35 penalty (highly immunogenic).\n* Duffy mismatch = -0.25 penalty.\n* Kidd mismatch = -0.20 penalty.\n* The scorer checks the patient's existing `antibody_flags` and deducts penalties if the donor possesses corresponding antigens.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": "",
+    "id": 250
+  },
+  {
+    "category": "devops_projects",
+    "subcategory": "BloodBridge AI",
+    "question": "Why did you choose Bolna.ai over standard Twilio Voice + gTTS?",
+    "answer": "Bolna.ai provides an India-first voice infrastructure:\n* **Native SIP Trunking**: Twilio requires purchase and validation of US numbers which can trigger spam filters on Indian mobile networks. Bolna integrates natively with Indian telecom providers for clean outbound caller ID.\n* **Built-in Sarvam AI**: We get native Indian regional text-to-speech voices (Meera for Hindi, Padmaja for Telugu, Lakshmi for Tamil) with natural accents, bypassing the robotic tone of Google TTS.\n* **Latency & NLU**: Speech-to-Text and intent mapping (YES/NO responses) are handled in-session with under 500ms latency.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": "",
+    "id": 251
+  },
+  {
+    "category": "devops_projects",
+    "subcategory": "BloodBridge AI",
+    "question": "How did you implement DPDP Act 2023 compliance?",
+    "answer": "India's DPDP Act 2023 mandates strict data protection, consent, and user access:\n* **Consent Registry**: The `consent_records` table logs consent status. We store a cryptographic SHA256 hash of the exact consent text shown to the donor in their regional language to maintain a verifiable audit trail.\n* **Right to Erasure (DPDP Sec 12)**: Triggered via the `/deletedata` Telegram command or API. We check if the donor is in any active emergency chain. If not, we run a cascade delete on their memory, gamification, and consent records. The donor profile is fully anonymized while retaining their donation count and blood type for historical statistics.\n* **Audit Hash Log**: Client IP addresses are hashed using SHA256 before writing to server access logs to protect PII.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": "",
+    "id": 252
+  },
+  {
+    "category": "devops_projects",
+    "subcategory": "BloodBridge AI",
+    "question": "How does the LoRa Offline Bridge function?",
+    "answer": "To support remote tribal clinics lacking cellular data, we designed a custom 8-byte packet protocol:\n* Byte 0: Blood type code.\n* Bytes 1-3: First 3 bytes of MD5(patient_id) to verify identity.\n* Byte 4: Urgency and phenotype flags.\n* Byte 5: Region / City code.\n* Bytes 6-7: CRC16/CCITT-FALSE checksum.\n* The LoRa simulator serializes this packet and POSTs it to the `/api/lora/ingest` endpoint. The backend decodes it, resolves the patient from the hash, creates the emergency request, and kicks off the LangGraph matching workflow without requiring internet at the patient's location.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": "",
+    "id": 253
+  },
+  {
+    "category": "devops_projects",
+    "subcategory": "Projects",
+    "question": "How did you handle the deployment and serving of the heavy CNN model in your Fashion Recommender system?",
+    "answer": "* **Model Serving**: Serving a large deep learning model (like VGG16/ResNet) directly within a synchronous web framework can cause massive bottlenecks. Instead, I decoupled the model inference using **FastAPI** (or TensorFlow Serving/ONNX Runtime).\n* **Optimization**:\n  1. **ONNX Conversion**: Converted the PyTorch/Keras model to ONNX format to optimize the computation graph and reduce inference latency by ~30%.\n  2. **Batching**: Configured dynamic batching on the inference server to group multiple concurrent image requests together, maximizing GPU/CPU utilization.\n  3. **Caching**: Stored the extracted feature vectors in the Vector Database. Inference is only required for *new* images uploaded by users. Pre-existing database images do not need to be re-run through the CNN.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": "",
+    "id": 254
+  },
+  {
+    "category": "devops_projects",
+    "subcategory": "Projects",
+    "question": "How would you handle a scenario where a user forgets their Master Password in your Zero-Knowledge Password Manager?",
+    "answer": "* **The Zero-Knowledge Dilemma**: Because the encryption key is derived entirely from the Master Password on the client side, if the user forgets the Master Password, the server cannot restore access to the encrypted vault. The data is mathematically unrecoverable.\n* **Mitigation Strategies**:\n  1. **Emergency Kit**: During onboarding, users are prompted to download or print an 'Emergency Kit' PDF. This document contains a hint for their Master Password and a secondary randomly generated 'Secret Key' used to salt their login on new devices.\n  2. **Vault Reset**: If all access is lost, I implemented an account recovery flow verified via Email/2FA. This allows the user to regain access to their *account*, but their previous vault is wiped clean and re-initialized with a new Master Password.\n  3. **Biometric Fallback**: On mobile/desktop apps, users can unlock the vault using FaceID/TouchID (where the derived encryption key is securely stored in the device's Secure Enclave) if they temporarily forget the password.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": "",
+    "id": 255
+  },
+  {
+    "category": "devops_projects",
+    "subcategory": "BloodBridge AI",
+    "question": "Can you elaborate on the Machine Learning models used in BloodBridge AI for donor churn and patient urgency?",
+    "answer": "* **Donor Churn Prediction (XGBoost Classifier)**: \n  - We trained an XGBoost model to predict if a donor is at high risk of becoming inactive.\n  - **Features**: Days since last donation, total donation count, response rate to previous alerts, age, and geographic distance to the nearest clinic.\n  - **Action**: If the probability of churn exceeds 75%, the Gamification/Planner agent is triggered to send personalized appreciation messages or voice calls to re-engage the donor.\n* **Patient Urgency Scoring (XGBoost Regressor)**:\n  - We needed a dynamic way to rank patients during a shortage.\n  - **Features**: Current Hemoglobin (Hb) levels, days elapsed since their last transfusion cycle, age, and boolean flags for cardiac/liver complications.\n  - **Output**: The model outputs a continuous urgency score (1.0 to 10.0). The LangGraph workflow uses this score to prioritize matching and allocate the rarest blood types (e.g., O-negative, Kell-negative) to the most critical patients first.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": "",
+    "id": 256
+  },
+  {
     "category": "vidvantu",
     "subcategory": "Vidvantu Architecture & FastAPI",
     "question": "How does FastAPI handle asynchronous requests, and why was it chosen for this project?",
@@ -2682,7 +2825,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 244
+    "id": 257
   },
   {
     "category": "vidvantu",
@@ -2693,7 +2836,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 245
+    "id": 258
   },
   {
     "category": "vidvantu",
@@ -2704,7 +2847,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 246
+    "id": 259
   },
   {
     "category": "vidvantu",
@@ -2715,7 +2858,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 247
+    "id": 260
   },
   {
     "category": "vidvantu",
@@ -2726,7 +2869,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 248
+    "id": 261
   },
   {
     "category": "vidvantu",
@@ -2737,7 +2880,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 249
+    "id": 262
   },
   {
     "category": "vidvantu",
@@ -2748,7 +2891,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 250
+    "id": 263
   },
   {
     "category": "vidvantu",
@@ -2759,7 +2902,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 251
+    "id": 264
   },
   {
     "category": "vidvantu",
@@ -2770,7 +2913,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 252
+    "id": 265
   },
   {
     "category": "vidvantu",
@@ -2781,7 +2924,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 253
+    "id": 266
   },
   {
     "category": "vidvantu",
@@ -2792,7 +2935,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 254
+    "id": 267
   },
   {
     "category": "vidvantu",
@@ -2803,7 +2946,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 255
+    "id": 268
   },
   {
     "category": "vidvantu",
@@ -2814,7 +2957,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 256
+    "id": 269
   },
   {
     "category": "vidvantu",
@@ -2825,7 +2968,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 257
+    "id": 270
   },
   {
     "category": "vidvantu",
@@ -2836,7 +2979,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 258
+    "id": 271
   },
   {
     "category": "vidvantu",
@@ -2847,7 +2990,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 259
+    "id": 272
   },
   {
     "category": "vidvantu",
@@ -2858,7 +3001,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 260
+    "id": 273
   },
   {
     "category": "vidvantu",
@@ -2869,7 +3012,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 261
+    "id": 274
   },
   {
     "category": "vidvantu",
@@ -2880,7 +3023,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 262
+    "id": 275
   },
   {
     "category": "vidvantu",
@@ -2891,7 +3034,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 263
+    "id": 276
   },
   {
     "category": "vidvantu",
@@ -2902,7 +3045,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 264
+    "id": 277
   },
   {
     "category": "vidvantu",
@@ -2913,7 +3056,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 265
+    "id": 278
   },
   {
     "category": "vidvantu",
@@ -2924,7 +3067,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 266
+    "id": 279
   },
   {
     "category": "vidvantu",
@@ -2935,7 +3078,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 267
+    "id": 280
   },
   {
     "category": "vidvantu",
@@ -2946,7 +3089,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 268
+    "id": 281
   },
   {
     "category": "vidvantu",
@@ -2957,7 +3100,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 269
+    "id": 282
   },
   {
     "category": "vidvantu",
@@ -2968,7 +3111,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 270
+    "id": 283
   },
   {
     "category": "vidvantu",
@@ -2979,7 +3122,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 271
+    "id": 284
   },
   {
     "category": "vidvantu",
@@ -2990,7 +3133,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 272
+    "id": 285
   },
   {
     "category": "vidvantu",
@@ -3001,7 +3144,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 273
+    "id": 286
   },
   {
     "category": "vidvantu",
@@ -3012,7 +3155,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 274
+    "id": 287
   },
   {
     "category": "vidvantu",
@@ -3023,7 +3166,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 275
+    "id": 288
   },
   {
     "category": "vidvantu",
@@ -3034,7 +3177,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 276
+    "id": 289
   },
   {
     "category": "vidvantu",
@@ -3045,7 +3188,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 277
+    "id": 290
   },
   {
     "category": "vidvantu",
@@ -3056,7 +3199,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 278
+    "id": 291
   },
   {
     "category": "vidvantu",
@@ -3067,7 +3210,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 279
+    "id": 292
   },
   {
     "category": "vidvantu",
@@ -3078,7 +3221,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 280
+    "id": 293
   },
   {
     "category": "vidvantu",
@@ -3089,7 +3232,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 281
+    "id": 294
   },
   {
     "category": "vidvantu",
@@ -3100,7 +3243,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 282
+    "id": 295
   },
   {
     "category": "vidvantu",
@@ -3111,7 +3254,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 283
+    "id": 296
   },
   {
     "category": "vidvantu",
@@ -3122,7 +3265,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 284
+    "id": 297
   },
   {
     "category": "vidvantu",
@@ -3133,7 +3276,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 285
+    "id": 298
   },
   {
     "category": "vidvantu",
@@ -3144,7 +3287,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 286
+    "id": 299
   },
   {
     "category": "vidvantu",
@@ -3155,7 +3298,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 287
+    "id": 300
   },
   {
     "category": "vidvantu",
@@ -3166,7 +3309,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 288
+    "id": 301
   },
   {
     "category": "vidvantu",
@@ -3177,7 +3320,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 289
+    "id": 302
   },
   {
     "category": "vidvantu",
@@ -3188,7 +3331,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 290
+    "id": 303
   },
   {
     "category": "vidvantu",
@@ -3199,7 +3342,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 291
+    "id": 304
   },
   {
     "category": "vidvantu",
@@ -3210,7 +3353,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 292
+    "id": 305
   },
   {
     "category": "vidvantu",
@@ -3221,7 +3364,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 293
+    "id": 306
   },
   {
     "category": "genai_rag",
@@ -3232,7 +3375,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 294
+    "id": 307
   },
   {
     "category": "genai_rag",
@@ -3243,7 +3386,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 295
+    "id": 308
   },
   {
     "category": "genai_rag",
@@ -3254,7 +3397,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 296
+    "id": 309
   },
   {
     "category": "genai_rag",
@@ -3265,7 +3408,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 297
+    "id": 310
   },
   {
     "category": "genai_rag",
@@ -3276,7 +3419,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 298
+    "id": 311
   },
   {
     "category": "genai_rag",
@@ -3287,7 +3430,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 299
+    "id": 312
   },
   {
     "category": "genai_rag",
@@ -3298,7 +3441,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 300
+    "id": 313
   },
   {
     "category": "genai_rag",
@@ -3309,7 +3452,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 301
+    "id": 314
   },
   {
     "category": "genai_rag",
@@ -3320,7 +3463,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 302
+    "id": 315
   },
   {
     "category": "genai_rag",
@@ -3331,7 +3474,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "import asyncio\nfrom langchain_openai import ChatOpenAI\n\nasync def run_queries():\n    llm = ChatOpenAI()\n    tasks = [llm.ainvoke(\"Query 1\"), llm.ainvoke(\"Query 2\")]\n    results = await asyncio.gather(*tasks)\n    return results",
-    "id": 303
+    "id": 316
   },
   {
     "category": "genai_rag",
@@ -3342,7 +3485,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "import pytest\nfrom unittest.mock import MagicMock\nfrom langchain.tools import BaseTool\n\n@pytest.fixture\ndef mock_db_tool():\n    # Mocking the actual database execution logic inside the tool\n    tool = MagicMock(spec=BaseTool)\n    tool.name = \"db_search\"\n    tool.run.return_value = '{\"status\": \"success\", \"data\": \"Mocked DB Result\"}'\n    return tool\n\ndef test_agent_with_mock(mock_db_tool):\n    result = mock_db_tool.run(\"test query\")\n    assert \"Mocked DB Result\" in result",
-    "id": 304
+    "id": 317
   },
   {
     "category": "genai_rag",
@@ -3353,7 +3496,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 305
+    "id": 318
   },
   {
     "category": "genai_rag",
@@ -3364,7 +3507,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 306
+    "id": 319
   },
   {
     "category": "genai_rag",
@@ -3375,7 +3518,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 307
+    "id": 320
   },
   {
     "category": "genai_rag",
@@ -3386,7 +3529,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 308
+    "id": 321
   },
   {
     "category": "genai_rag",
@@ -3397,7 +3540,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 309
+    "id": 322
   },
   {
     "category": "genai_rag",
@@ -3408,7 +3551,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 310
+    "id": 323
   },
   {
     "category": "genai_rag",
@@ -3419,7 +3562,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 311
+    "id": 324
   },
   {
     "category": "genai_rag",
@@ -3430,7 +3573,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 312
+    "id": 325
   },
   {
     "category": "genai_rag",
@@ -3441,7 +3584,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 313
+    "id": 326
   },
   {
     "category": "genai_rag",
@@ -3452,7 +3595,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 314
+    "id": 327
   },
   {
     "category": "genai_rag",
@@ -3463,7 +3606,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 315
+    "id": 328
   },
   {
     "category": "genai_rag",
@@ -3474,7 +3617,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 316
+    "id": 329
   },
   {
     "category": "genai_rag",
@@ -3485,7 +3628,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 317
+    "id": 330
   },
   {
     "category": "genai_rag",
@@ -3496,7 +3639,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 318
+    "id": 331
   },
   {
     "category": "genai_rag",
@@ -3507,7 +3650,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 319
+    "id": 332
   },
   {
     "category": "genai_rag",
@@ -3518,7 +3661,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 320
+    "id": 333
   },
   {
     "category": "genai_rag",
@@ -3529,7 +3672,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 321
+    "id": 334
   },
   {
     "category": "genai_rag",
@@ -3540,7 +3683,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 322
+    "id": 335
   },
   {
     "category": "genai_rag",
@@ -3551,7 +3694,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 323
+    "id": 336
   },
   {
     "category": "genai_rag",
@@ -3562,7 +3705,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 324
+    "id": 337
   },
   {
     "category": "genai_rag",
@@ -3573,7 +3716,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 325
+    "id": 338
   },
   {
     "category": "genai_rag",
@@ -3584,7 +3727,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 326
+    "id": 339
   },
   {
     "category": "genai_rag",
@@ -3595,7 +3738,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 327
+    "id": 340
   },
   {
     "category": "genai_rag",
@@ -3606,7 +3749,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 328
+    "id": 341
   },
   {
     "category": "dl_cv",
@@ -3617,7 +3760,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 329
+    "id": 342
   },
   {
     "category": "dl_cv",
@@ -3628,7 +3771,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 330
+    "id": 343
   },
   {
     "category": "dl_cv",
@@ -3639,7 +3782,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 331
+    "id": 344
   },
   {
     "category": "dl_cv",
@@ -3650,7 +3793,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 332
+    "id": 345
   },
   {
     "category": "dl_cv",
@@ -3661,7 +3804,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 333
+    "id": 346
   },
   {
     "category": "dl_cv",
@@ -3672,7 +3815,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 334
+    "id": 347
   },
   {
     "category": "dl_cv",
@@ -3683,7 +3826,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 335
+    "id": 348
   },
   {
     "category": "dl_cv",
@@ -3694,7 +3837,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 336
+    "id": 349
   },
   {
     "category": "dl_cv",
@@ -3705,7 +3848,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 337
+    "id": 350
   },
   {
     "category": "dl_cv",
@@ -3716,7 +3859,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 338
+    "id": 351
   },
   {
     "category": "dl_cv",
@@ -3727,7 +3870,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 339
+    "id": 352
   },
   {
     "category": "ml_stats",
@@ -3738,7 +3881,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 340
+    "id": 353
   },
   {
     "category": "ml_stats",
@@ -3749,7 +3892,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 341
+    "id": 354
   },
   {
     "category": "ml_stats",
@@ -3760,7 +3903,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 342
+    "id": 355
   },
   {
     "category": "ml_stats",
@@ -3771,7 +3914,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 343
+    "id": 356
   },
   {
     "category": "ml_stats",
@@ -3782,7 +3925,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 344
+    "id": 357
   },
   {
     "category": "ml_stats",
@@ -3793,7 +3936,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 345
+    "id": 358
   },
   {
     "category": "ml_stats",
@@ -3804,7 +3947,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 346
+    "id": 359
   },
   {
     "category": "ml_stats",
@@ -3815,7 +3958,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 347
+    "id": 360
   },
   {
     "category": "ml_stats",
@@ -3826,7 +3969,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 348
+    "id": 361
   },
   {
     "category": "ml_stats",
@@ -3837,7 +3980,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 349
+    "id": 362
   },
   {
     "category": "ml_stats",
@@ -3848,6 +3991,6 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 350
+    "id": 363
   }
 ];
