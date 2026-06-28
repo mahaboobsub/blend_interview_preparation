@@ -13,6 +13,7 @@ from db_dl import DL_QUESTIONS
 from db_genai import GENAI_QUESTIONS
 from db_fullstack import FULLSTACK_QUESTIONS
 from db_projects import PROJECT_QUESTIONS
+from db_vidvantu import VIDVANTU_QUESTIONS
 
 CATEGORIES = {
     "sql_db": "SQL, DB Design & DBMS Deep Concepts",
@@ -21,7 +22,8 @@ CATEGORIES = {
     "dl_cv": "Deep Learning & Computer Vision",
     "genai_rag": "Generative AI, RAG & Agents",
     "fullstack": "Fullstack Development (JS/Python/REST)",
-    "devops_projects": "DevOps, System Design & Projects"
+    "devops_projects": "DevOps, System Design & Projects",
+    "vidvantu": "Vidvantu AI Architecture & Case Study"
 }
 
 # ─── Parse questions.txt ─────────────────────────────────────
@@ -108,6 +110,7 @@ add_batch(DL_QUESTIONS, "db_dl")
 add_batch(GENAI_QUESTIONS, "db_genai")
 add_batch(FULLSTACK_QUESTIONS, "db_fullstack")
 add_batch(PROJECT_QUESTIONS, "db_projects")
+add_batch(VIDVANTU_QUESTIONS, "db_vidvantu")
 
 # Parse and add questions.txt (these also have detailed answers)
 workspace = os.path.dirname(os.path.abspath(__file__))
@@ -169,7 +172,7 @@ print("Updated question&dsainjavapython.md")
 write_md(
     os.path.join(workspace, "Resume-based additional interview questions covering all gaps.md"),
     "Resume-Based Interview Questions — Edge Case Coverage",
-    ["dl_cv", "genai_rag", "fullstack", "devops_projects"]
+    ["dl_cv", "genai_rag", "fullstack", "devops_projects", "vidvantu"]
 )
 print("Updated Resume-based additional interview questions covering all gaps.md")
 
