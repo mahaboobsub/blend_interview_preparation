@@ -1,0 +1,582 @@
+[
+  {
+    "category": "genai_rag",
+    "subcategory": "LangChain & Agentic AI",
+    "question": "What is LangChain, and why is it needed in the modern LLM application development stack?",
+    "answer": "* What it is: LangChain is a development framework designed to build applications powered by Large Language Models (LLMs). It acts as the \"nervous system\" that connects the LLM (\"brain\") to external systems, data sources, memory, and tools.\n* Why we need it: By themselves, LLMs are stateless and can only answer questions based on pre-training data. They lack:\n  - Memory: The ability to retain past conversation context.\n  - Access to our data: The ability to fetch real-world data from databases or documents.\n  - Multi-step reasoning: The ability to execute sequences of steps dynamically.\n  - External tools: The ability to interact with APIs, web searches, and calculators.\n  LangChain solves this by providing the necessary building blocks and connectors to tie these elements together into complete, context-aware applications.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "genai_rag",
+    "subcategory": "LangChain & Agentic AI",
+    "question": "Define the five key components of LangChain as described in the ecosystem.",
+    "answer": "1. Chains: Logical pipelines that combine multiple steps or calls to run in sequence.\n2. Memory: State-management utilities that remember past information (e.g., chat history) to provide conversational continuity.\n3. Agents: Dynamic structures where the LLM is given access to tools and decides what action to take using those tools.\n4. Retrieval (RAG): Components designed to fetch relevant data from documents or databases before answering, injecting context dynamically.\n5. Tools: Standardized interfaces that allow LLMs to connect with external systems like APIs, Search, Calculators, etc.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "genai_rag",
+    "subcategory": "LangChain & Agentic AI",
+    "question": "Describe the high-level operational workflow of a LangChain application.",
+    "answer": "1. A User submits a query or instruction.\n2. The LangChain App acts as the coordinator and processes the request.\n3. Decides what to do: Based on the instructions, it determines whether to:\n   - Call the LLM directly for generation.\n   - Access Tools/Data (Search, Database, API, Docs).\n4. If tools or data are invoked, the results are retrieved and fed back to the LangChain App.\n5. The LangChain App packages the retrieved context along with the user's prompt and sends it to the LLM.\n6. The LLM generates the final response.\n7. The LangChain App returns the response back to the User.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "genai_rag",
+    "subcategory": "LangChain & Agentic AI",
+    "question": "Detail the distinct roles of the four core components of the LangChain Ecosystem.",
+    "answer": "* LangChain (Framework): The core open-source library providing APIs and abstractions for chains, memory, agents, and tool integrations.\n* LangSmith: A developer platform specifically designed for debugging, testing, evaluating, and monitoring LangChain applications. It helps developers trace LLM calls.\n* LangChain Hub: A registry/repository to discover, share, and version prompt templates, chains, and agent configurations.\n* LangGraph: An extension of the framework designed to build stateful, multi-actor applications using graph structures, ideal for complex, cyclic agent workflows.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "genai_rag",
+    "subcategory": "LangChain & Agentic AI",
+    "question": "What are the core components of an AI Agent, and how do they function together?",
+    "answer": "An AI Agent acts as an autonomous unit governed by several building blocks:\n1. Planner: The reasoning mechanism that outlines a sequence of steps to achieve a goal (e.g., ReAct, Plan-and-Solve).\n2. Tool Calling & Function Calling: The ability of the model to output a structured JSON schema specifying a tool name and arguments, allowing the agent to interact with databases, web search, or local code.\n3. Memory: Divided into short-term memory (in-context conversation history) and long-term memory (vector database of past interactions).\n4. ReAct Loop (Reasoning + Acting): An iterative cycle where the agent reasons about its current state, acts by calling a tool, observes the tool output, and reasons again until the goal is met.\n5. Reflection: Self-evaluation step where the agent critiques its own past outputs to correct errors and optimize its plan.\n6. Multi-Agent Systems: Architectural patterns where specialized agents collaborate, delegate tasks, and pass messages to solve complex workflows.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "genai_rag",
+    "subcategory": "LangChain & Agentic AI",
+    "question": "Explain the different types of Agent Memory Systems (Episodic, Semantic, Short-Term, Long-Term) and how they are stored.",
+    "answer": "* Short-Term Memory: The in-context memory that stores the raw conversation log of the active session. Usually managed via chat history variables passed in the LLM context window.\n* Episodic Memory (Short-to-Medium Term): Retains detailed sequences of actions, thoughts, and observation results from previous steps in an agent workflow, allowing the agent to look back at its own trial-and-error history during execution.\n* Semantic Memory (Long-Term): Stores facts, concepts, and relationships learned over time. This is represented by indexing external files, corporate wiki spaces, or past completed tasks in a Vector Database.\n* Long-Term Memory (User-Specific): Remembers user preferences, settings, and profile data across multiple distinct sessions. Typically saved in a relational or document database (e.g., PostgreSQL, MongoDB) and retrieved at the beginning of each session.\n\n--------------------------------------------------------------------------------\n[Interview Questions]\n--------------------------------------------------------------------------------",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "genai_rag",
+    "subcategory": "LangChain & Agentic AI",
+    "question": "LLMs are stateless by default. Explain the architectural options for introducing 'Memory' into an LLM application using LangChain, and how it impacts token consumption.",
+    "answer": "* The Concept: Because LLMs do not retain memory between API calls, memory must be simulated by passing the relevant parts of the conversation history back to the model with every new prompt.\n* LangChain Memory Strategies:\n  1. ConversationBufferMemory: Appends the entire chat history to every prompt. While simple, it leads to high token costs and risks exceeding the LLM's context window.\n  2. ConversationSummaryMemory: Uses an LLM to generate a running summary of the conversation in the background. The summary (instead of raw logs) is passed to the next prompt, preserving long-term context while keeping token usage predictable.\n  3. ConversationTokenBufferMemory: Keeps the raw history up to a strict limit of tokens, discarding older messages once the limit is reached.\n  4. ConversationWindowBufferMemory: Keeps only a fixed sliding window of the last 'K' exchanges.\n* Interviewer Insight: When choosing a memory strategy, you must balance cost (tokens consumed per call) against precision (exact history vs. summarized history).",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "genai_rag",
+    "subcategory": "LangChain & Agentic AI",
+    "question": "Walk me through the step-by-step architecture of a Document Q&A App (RAG) built with LangChain, citing each transformation phase.",
+    "answer": "1. Documents (PDFs, Notes, Webpages) -> The raw files containing unstructured data.\n2. Load: The app uses Document Loaders to read the raw text and Metadata.\n3. Split/Chunk: Text is split into smaller, overlapping semantic chunks to fit LLM constraints and isolate specific facts.\n4. Embeddings: Text chunks are converted into dense vector representations using an Embedding model.\n5. Vector DB: Embeddings and their corresponding text chunks are stored in a Vector Database for fast similarity searches.\n6. Retrieve: When a User Question is asked, it is converted into a vector embedding, and the Vector DB performs a similarity search to retrieve the most relevant text chunks.\n7. Provide Context: The retrieved text chunks are wrapped in a prompt template along with the User Question.\n8. LLM Generation: The LLM processes this context-infused prompt and generates a fact-based answer.\n9. Answer to User: The final generated response is sent back to the user.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "genai_rag",
+    "subcategory": "LangChain & Agentic AI",
+    "question": "Explain the difference between single-step agents and multi-step agents. How does LangGraph improve on basic LangChain agents for complex, cyclic workflows?",
+    "answer": "* Single-Step Agents: Receive a query, select a single tool, execute it, and return the final answer. There is no iterative self-correction or branching path.\n* Multi-Step Agents: Run an active loop (e.g., ReAct). They can call a tool, inspect the result, decide it was insufficient, call a different tool, and continue until they are satisfied.\n* LangGraph Advantage: Basic LangChain agents organize workflows as a linear chain or a simple pre-defined DAG (Directed Acyclic Graph). However, real-world workflows often require cycles (loops), such as \"if tool output fails validation, loop back to prompt rewriting\". LangGraph models the application as a stateful graph where nodes are agents/tools and edges are conditional state transitions, supporting state persistence, human-in-the-loop validation, and arbitrary cycles.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "genai_rag",
+    "subcategory": "LangChain & Agentic AI",
+    "question": "Why is asynchronous programming critical in Python-based agentic architectures? How would you implement it using LangChain?",
+    "answer": "* Importance: Agentic applications spend a large portion of execution time waiting for I/O operations\u2014network latency from LLM API calls, vector database searches, and external tool execution. Synchronous execution blocks the entire thread, leading to high latency and poor scaling. Asynchronous execution (`async/await`) allows the processor to handle other tasks while waiting for I/O results.\n* Implementation: LangChain supports native async methods (prefixed with `a`), such as `ainvoke()`, `abatch()`, or `astream()`.\n* Example Pattern:\n```python\nimport asyncio\nfrom langchain_openai import ChatOpenAI\n\nasync def run_queries():\n    llm = ChatOpenAI()\n    tasks = [llm.ainvoke(\"Query 1\"), llm.ainvoke(\"Query 2\")]\n    results = await asyncio.gather(*tasks)\n    return results\n```",
+    "is_coding": true,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": "import asyncio\nfrom langchain_openai import ChatOpenAI\n\nasync def run_queries():\n    llm = ChatOpenAI()\n    tasks = [llm.ainvoke(\"Query 1\"), llm.ainvoke(\"Query 2\")]\n    results = await asyncio.gather(*tasks)\n    return results"
+  },
+  {
+    "category": "genai_rag",
+    "subcategory": "LangChain & Agentic AI",
+    "question": "What are pytest fixtures, and how would you use them to test custom LangChain tools or agents without incurring API costs?",
+    "answer": "* Pytest Fixtures: Reusable helper functions in pytest that set up test states, mock data, or dependencies before running a test, and tear them down afterward.\n* Mocking LLMs for testing: To test the reasoning logic of agents or custom tools without executing expensive model calls, you should mock the LLM wrapper using pytest fixtures.\n* Mocking custom tools:\n```python\nimport pytest\nfrom unittest.mock import MagicMock\nfrom langchain.tools import BaseTool\n\n@pytest.fixture\ndef mock_db_tool():\n    # Mocking the actual database execution logic inside the tool\n    tool = MagicMock(spec=BaseTool)\n    tool.name = \"db_search\"\n    tool.run.return_value = '{\"status\": \"success\", \"data\": \"Mocked DB Result\"}'\n    return tool\n\ndef test_agent_with_mock(mock_db_tool):\n    result = mock_db_tool.run(\"test query\")\n    assert \"Mocked DB Result\" in result\n```",
+    "is_coding": true,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": "import pytest\nfrom unittest.mock import MagicMock\nfrom langchain.tools import BaseTool\n\n@pytest.fixture\ndef mock_db_tool():\n    # Mocking the actual database execution logic inside the tool\n    tool = MagicMock(spec=BaseTool)\n    tool.name = \"db_search\"\n    tool.run.return_value = '{\"status\": \"success\", \"data\": \"Mocked DB Result\"}'\n    return tool\n\ndef test_agent_with_mock(mock_db_tool):\n    result = mock_db_tool.run(\"test query\")\n    assert \"Mocked DB Result\" in result"
+  },
+  {
+    "category": "genai_rag",
+    "subcategory": "LangChain & Agentic AI",
+    "question": "Design a Multi-Agent system for a research writing task (e.g., Researcher Agent + Editor Agent + Writer Agent). How do they communicate, maintain shared state, and avoid infinite execution loops?",
+    "answer": "* Architecture: I would design this using LangGraph as a stateful multi-agent system.\n* Shared State: Define a central state object (containing `research_findings`, `draft`, `critique`, and `revision_count`).\n* Flow & Communication:\n  1. Researcher Agent queries search engines and databases, populates `research_findings`, and transitions to the Writer Agent.\n  2. Writer Agent reads `research_findings` and writes a `draft`, transitioning to the Editor Agent.\n  3. Editor Agent reviews the `draft`. If it finds errors, it updates `critique` and routing logic sends it back to the Writer Agent for revisions. If clean, the process ends.\n* Avoiding Infinite Loops:\n  - Add a `revision_count` variable to the state.\n  - Implement a conditional edge checking if `revision_count >= max_revisions` (e.g., 3). If it exceeds the limit, bypass editing and force routing to the final output node.\n  - Apply hard Agent Guardrails (maximum timeouts and token limits) at the backend server layer.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "genai_rag",
+    "subcategory": "RAG & Vector Databases",
+    "question": "What are the fundamental differences between Traditional RAG and GraphRAG in terms of data organization, retrieval, and reasoning?",
+    "answer": "* Traditional RAG:\n  - Data Organization: Documents are split into plain, unstructured text chunks and stored as vector embeddings in a vector database (flat text).\n  - Retrieval: Uses semantic similarity search (vector search) to retrieve the top-K chunks that match the query embedding.\n  - Context & Reasoning: Focuses on single passages or direct text matches. Performs direct, shallow retrieval.\n* GraphRAG:\n  - Data Organization: Extracted entities (nodes) and their relationships (edges) are organized to form a structured Knowledge Graph.\n  - Retrieval: Combines vector search with graph traversal to locate relevant entities, relations, and communities.\n  - Context & Reasoning: Connects facts across multiple documents. Enables multi-step (multi-hop) traversal and reasoning across the network of relationships.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "genai_rag",
+    "subcategory": "RAG & Vector Databases",
+    "question": "Detail the seven distinct RAG architectures that every AI builder should know.",
+    "answer": "1. NAIVE RAG: The simplest form of RAG. Direct pipeline: User Query -> Retrieve Documents -> LLM -> Response. Best for simple chatbots.\n2. ADVANCED RAG: Improves retrieval quality using extra steps. Integrates Query Rewriting, Metadata Filtering, Better Chunking, and Re-ranking before sending to the LLM.\n3. AGENTIC RAG: AI Agent controls retrieval. The agent decides what to retrieve, how to retrieve (e.g. which tool to use), and how to respond using planning.\n4. GRAPH RAG: Retrieves and reasons over knowledge graphs instead of plain text, mapping out entities and relations.\n5. MULTI-MODAL RAG: Works with different data types like images, PDFs, audio, video, etc., using multimodal retrievers.\n6. HYBRID RAG: Combines keyword search (BM25), vector search, and other methods, merging and ranking results for higher accuracy.\n7. CORRECTIVE RAG: Adds a validation layer (Validate/Check) to verify the facts in retrieved chunks and reduce hallucinations before LLM generation.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "genai_rag",
+    "subcategory": "RAG & Vector Databases",
+    "question": "Compare the step-by-step implementation flows of Traditional RAG vs. GraphRAG.",
+    "answer": "* Traditional RAG Flow:\n  Load documents -> Define queries -> Run initial retrieval -> Filter by relevancy (optional) -> Sort by similarity -> Generate context to LLM.\n* GraphRAG Flow:\n  Load model -> Extract entities & relationships -> Build & query knowledge graph -> Traverse for multi-doc reasoning -> Get scores -> Gather structured context -> Synthesize multi-part answer -> Pass context to LLM. (Note: Reranking typically happens after retrieval and before generating).",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "genai_rag",
+    "subcategory": "RAG & Vector Databases",
+    "question": "What is the Hybrid RAG approach, and how does it balance the strengths and weaknesses of both methods?",
+    "answer": "* What it is: A hybrid architecture that builds a smart routing layer to choose the best retrieval path for each query.\n* How it works:\n  - Simple queries can be handled by Traditional RAG (e.g., fast search of static facts).\n  - Complex reasoning tasks can use GraphRAG.\n  - The routing layer analyzes the incoming user query and determines the optimal retrieval path.\n* Benefit: It optimizes performance, accuracy, and cost. It uses the speed and low cost of Traditional RAG for simple lookups, and reserves GraphRAG for complex multi-hop relationship queries.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "genai_rag",
+    "subcategory": "RAG & Vector Databases",
+    "question": "Describe the \"End-to-End Architecture of Enhanced RAG\". What are the newly introduced stages for document ingestion and retrieval?",
+    "answer": "Enhanced RAG introduces advanced offline ingestion steps and pre-processing and post-processing LLM guardrails:\n* Enriched Document Processing (Ingestion):\n  1. Content Extraction: Parse GDocs, APIs, etc.\n  2. LLM Large (Table enrichment / custom metadata): A large LLM cleans extracted content, writes metadata, and formats tables.\n  3. Table-aware Chunking: Chunks tables cleanly without breaking their structural boundaries.\n  4. Embedding Model: Generates embeddings.\n* Offline Store: Stores chunks in a Feature Store and Vector Store.\n* Retrieval Process (Execution):\n  1. Pre-process: User query is passed to an LLM Small Query Optimizer and LLM Small Source Identifier to rewrite queries and find metadata filters.\n  2. Hybrid Search: Runs parallel Vector Search (Embedding Model) and BM25 Search (BM25-Reviewer).\n  3. Post-process: Retrieved chunks go through an LLM Small Post-processor to prune irrelevant blocks.\n  4. Generation: LLM Large Answer Generator creates the final response based on the post-processed chunks.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "genai_rag",
+    "subcategory": "RAG & Vector Databases",
+    "question": "Explain how Vector Databases store, index, and retrieve high-dimensional vectors. Detail the difference between Flat, IVF, and HNSW indexing.",
+    "answer": "* Storage: Vector databases represent data objects (text chunks, images) as dense numerical arrays (embeddings) generated by deep learning models. They store these vectors alongside their metadata (e.g., file paths, timestamps) for fast retrieval.\n* Indexing Methods:\n  1. Flat Indexing: No structural approximation. It performs a brute-force search comparing the query vector against every single vector in the database. 100% accurate (perfect recall) but scales linearly, making it too slow for large production datasets.\n  2. IVF (Inverted File Indexing): Splits the vector space into clusters (using K-Means). During search, the database only compares the query against vectors in the nearest cluster centroids. Highly speeds up query latency, but query items right on cluster boundaries may be missed (reduced recall).\n  3. HNSW (Hierarchical Navigable Small World): A graph-based index structure. It creates a multi-layered graph where top layers have sparse connections (for fast, long-distance skips) and bottom layers have dense connections (for precise local searches). Offers extremely fast query performance and high recall, but consumes significantly more RAM to store the graph structures.\n\n--------------------------------------------------------------------------------\n[Interview Questions]\n--------------------------------------------------------------------------------",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "genai_rag",
+    "subcategory": "RAG & Vector Databases",
+    "question": "You are designing a Q&A assistant for a complex domain like legal compliance or healthcare diagnostics. Which retrieval architecture would you pitch: Traditional RAG or GraphRAG? Defend your choice using trade-offs.",
+    "answer": "* Pitch: I would pitch GraphRAG (or a Hybrid RAG model).\n* Defense:\n  1. Domain Complexity & Reasoning: Legal and medical data are deeply interconnected. Traditional RAG matches text similarity but cannot infer relationships. GraphRAG represents facts as entities and relationships, enabling multi-hop reasoning (connecting a patient symptom to multiple disease nodes and drug databases).\n  2. Question Type: These domains require \"exploratory\" and \"multi-step\" answers rather than simple keyword matches. GraphRAG traverses the graph to synthesize answers from different sections of different documents.\n  3. Explainability: In compliance and medicine, trace is critical. GraphRAG provides higher, path-based trace (you can visualize the exact graph paths used to construct the answer).\n  4. Trade-Offs (Cost & Speed): While GraphRAG has higher storage/query costs and slower query processing times, the accuracy requirement in legal/medical domains outweighs these constraints.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "genai_rag",
+    "subcategory": "RAG & Vector Databases",
+    "question": "What are the primary implementation challenges of GraphRAG, and how do they impact production architectures?",
+    "answer": "* Challenges:\n  1. Extra Complexity in Graph Creation: Extracting entities, relationships, and properties from raw text is highly dependent on prompts and LLM capability.\n  2. Graph Storage Requirements: Storing both vector embeddings and graph databases (Neo4j, Memgraph) adds operational overhead.\n  3. Slower Query Processing: Graph traversals and community summary lookups are computationally slower than simple cosine similarity calculations.\n  4. Increased Costs: Entity extraction during ingestion requires intensive LLM API usage, making indexing very expensive.\n* Production Impact: To mitigate this, architectures must separate ingestion (offline graph building) from query-time retrieval, and utilize aggressive caching for graph traversals.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "genai_rag",
+    "subcategory": "RAG & Vector Databases",
+    "question": "Explain why a \"Retrieve-and-Rerank\" pattern is superior to \"Naive RAG\" in production systems.",
+    "answer": "* The Problem in Naive RAG: Vector search (bi-encoders) is fast but optimized for speed over deep semantic alignment. It retrieves the top-K chunks based on cosine similarity, but the most relevant info might be ranked lower (e.g., at rank 7 instead of rank 1).\n* The Solution (Reranker): The Retrieve-and-Rerank pattern retrieves a larger number of candidates (e.g., top 25 chunks) using vector search, then passes them through a Cross-Encoder Reranker model. The reranker calculates the exact similarity between the query and each chunk in detail.\n* Benefits:\n  - Passes only the absolute best, most highly-aligned context (e.g., top 3) to the LLM.\n  - Prevents \"Lost in the Middle\" syndrome where LLMs ignore context in the middle of long prompts.\n  - Maximizes output accuracy while keeping prompt token counts low.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "genai_rag",
+    "subcategory": "RAG & Vector Databases",
+    "question": "Explain the metrics and methods used to evaluate a RAG pipeline before and after deployment (Pre-prod vs. Post-prod).",
+    "answer": "* Pre-production Evaluation (Golden Datasets):\n  - Golden Test Data: Build a curated dataset of representative queries and ideal ground-truth answers.\n  - LLM-as-a-Judge Eval: Use a large, powerful LLM (like GPT-4) to evaluate retrieved context and generated answers based on three key metrics:\n    1. Faithfulness (Is the answer grounded strictly in the retrieved context?).\n    2. Answer Relevance (Does the answer address the user's question?).\n    3. Context Precision (Are all retrieved chunks relevant to the question?).\n  - Batch Execution: Automate evaluation over the entire golden test suite using frameworks like Ragas or TruLens.\n* Post-production Monitoring:\n  - Batch Evaluation: Collect logs of real user interactions asynchronously.\n  - Stack Interface metrics: Monitor metrics such as latency, token count, cost, user thumbs-up/down feedback, and LLM-based online sanity checks for safety and hallucination detection.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "genai_rag",
+    "subcategory": "RAG & Vector Databases",
+    "question": "What is grounding in RAG systems, and how do chunking strategies (such as table-aware chunking) affect it?",
+    "answer": "* Grounding: The process of ensuring that an LLM's response is strictly based on verified, external context rather than its internal parametric training data (which reduces hallucinations).\n* Ingestion & Chunking impact: If data is poorly chunked, important context gets truncated. For example, standard chunking splits text at arbitrary character limits. If a table containing key figures is split in half across two different chunks, the semantic relationship between column headers and cell values is lost.\n* Table-aware Chunking: Parses tables as unified markdown/HTML entities and keeps them intact, injecting custom metadata attributes (e.g., column descriptions). This ensures the embedding representation of the chunk captures tabular data correctly, and the LLM receives complete tables for generation, maximizing grounding.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "genai_rag",
+    "subcategory": "RAG & Vector Databases",
+    "question": "Compare Vector Similarity Metrics: Cosine Similarity, Dot Product, and L2 (Euclidean) Distance. How do metadata filtering options (Pre-filtering vs Post-filtering) affect vector search query accuracy and speed?",
+    "answer": "* Similarity Metrics:\n  1. Cosine Similarity: Measures the angle between two vectors, ignoring magnitude. Ideal when document length varies widely. Ranges from $-1$ to $1$ (or $0$ to $1$ for positive-only features).\n  2. Dot Product: Measures both angle and magnitude ($A \\cdot B = |A||B|\\cos\\theta$). Extremely fast to calculate, especially if vectors are normalized (magnitude is 1), where it is mathematically identical to Cosine Similarity.\n  3. L2 Distance: Measures the straight-line distance between two vector points. Smaller value means higher similarity. Highly sensitive to vector magnitudes.\n* Metadata Filtering Options:\n  - Post-filtering: Runs the vector search first to find the top-K chunks, and then filters out chunks that do not match metadata (e.g., date or region).\n    * Drawback: If the top-K contains mostly old/irrelevant chunks, post-filtering might discard them all, leaving the LLM with little or no context.\n  - Pre-filtering: Searches only the subset of vectors that match the metadata criteria.\n    * Advantage: Guarantees that the retrieved top-K chunks are 100% relevant to the metadata filters. Requires index structures that support joint metadata-vector indexing to avoid traversing the entire dataset.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "genai_rag",
+    "subcategory": "Prompt Engineering & Cost Optimization",
+    "question": "What are the differences between Response Caching, Prompt Caching, and Semantic Caching?",
+    "answer": "* Response Caching: Stores the exact generated answer of an LLM for an exact input question. If a subsequent query matches the cached question verbatim, the cache returns the answer immediately without calling the LLM.\n* Prompt Caching: Caches the reusable prefix of a prompt (e.g., system instructions, few-shot examples, or large document context) at the LLM provider level. If multiple requests share the same prefix, the provider charges a significantly lower rate for those tokens.\n* Semantic Caching: Uses embedding similarity to match incoming queries to cached questions. For example, if \"What is OAuth?\" is cached, queries like \"Explain OAuth\" or \"Tell me about OAuth\" will hit the cache because their embedding similarity is above a set threshold.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "genai_rag",
+    "subcategory": "Prompt Engineering & Cost Optimization",
+    "question": "Explain how \"Query Classification\" and \"Multi-Model Routing\" reduce API costs.",
+    "answer": "* Query Classification: An intelligent routing step before execution. A classifier (which could be a small model or rule-based parser) determines the category of the user query (e.g., simple FAQ, search-related RAG, or complex agent/coding).\n* Multi-Model Routing: Uses the query classification to direct the task.\n  - Simple tasks (FAQ, simple extraction) are routed to a fast, cheap, small model (e.g., GPT-4o-mini, Claude Haiku).\n  - Highly complex tasks requiring deep reasoning (multi-step analysis, coding) are routed to a large, expensive model.\n  This ensures you do not waste money using frontier models for trivial questions.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "genai_rag",
+    "subcategory": "Prompt Engineering & Cost Optimization",
+    "question": "Describe \"Tool-First Architecture\" and how it optimizes LLM usage.",
+    "answer": "* Tool-First Architecture: In traditional LLM applications, every request goes straight to the LLM, which determines what tool to run. In a Tool-First approach, the system tries to resolve the user's request using static APIs, databases, or traditional search code first.\n* LLM Role: The LLM is strictly reserved for reasoning or synthesizing the retrieved data at the very end. If a simple database query can answer the question directly, the LLM is bypassed entirely, reducing costs to near-zero.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "genai_rag",
+    "subcategory": "Prompt Engineering & Cost Optimization",
+    "question": "What are \"Agent Guardrails\" and why are they critical for preventing runaway API bills?",
+    "answer": "* Agent Guardrails: Hard limits built into the execution loop of autonomous AI agents.\n* Key parameters:\n  - max_iterations: Limits the maximum number of thought-action loops.\n  - max_tool_calls: Restricts how many times an agent can invoke tools.\n  - max_tokens: Caps total tokens consumed in a single execution.\n  - timeout: Halts execution if a query runs too long.\n* Why critical: Autonomous agents can get stuck in infinite logic loops (e.g., Agent searches -> fails -> searches again -> fails). Without guardrails, a single user query could execute hundreds of model calls in minutes, resulting in thousands of dollars in API charges.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "genai_rag",
+    "subcategory": "Prompt Engineering & Cost Optimization",
+    "question": "What is AWS Bedrock, and how do Claude and Titan models fit into its architecture?",
+    "answer": "* AWS Bedrock: A fully managed service that offers key foundation models (FMs) from Amazon and leading AI startups via a single API, ensuring enterprise-grade security, data privacy, and integration with AWS resources.\n* Anthropic Claude: A high-performing LLM family on Bedrock, known for reasoning, coding, and context handling. Often used for complex multi-step reasoning or agents.\n* Amazon Titan: A suite of models developed by Amazon, including text generation, embeddings, and multimodal models. Typically utilized for lightweight tasks, embedding generation, or cost-effective processing.\n* Retrieval Integration: Bedrock provides managed \"Knowledge Bases\" that handle document parsing, chunking, embedding generation, and retrieval integration natively, using vector databases like OpenSearch, Pinecone, or Aurora.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "genai_rag",
+    "subcategory": "Prompt Engineering & Cost Optimization",
+    "question": "Explain the following Prompt Engineering techniques and their underlying mechanisms: Chain of Thought (CoT), Self-Consistency, and Tree of Thoughts (ToT).",
+    "answer": "* Chain of Thought (CoT): Prompts the LLM to generate intermediate reasoning steps before outputting the final answer (e.g., \"Let's think step by step\"). This distributes calculation steps across output tokens, improving accuracy on math and logical reasoning.\n* Self-Consistency: An extension of CoT. Instead of generating a single reasoning path, the system samples multiple independent reasoning paths from the LLM (using temperature > 0) and takes a majority vote over the final generated answers to select the most consistent result.\n* Tree of Thoughts (ToT): Extends CoT by framing problem-solving as a tree search. It breaks the task into discrete \"thought steps\" and uses an LLM evaluator to rate the feasibility of each step. The system applies search algorithms (like Depth-First Search or Breadth-First Search) to explore promising branches, allowing the agent to back-track if a path leads to a dead end.\n\n--------------------------------------------------------------------------------\n[Interview Questions]\n--------------------------------------------------------------------------------",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "genai_rag",
+    "subcategory": "Prompt Engineering & Cost Optimization",
+    "question": "You are tasked with redesigning a high-volume chatbot to cut API costs by 70%. Design a multi-layered cost optimization system using techniques from the LLM Cost Optimization sheet.",
+    "answer": "I would implement a 5-layer cost optimization pipeline:\n1. Layer 1: Semantic Caching. Check incoming queries against a vector cache database. If a query like \"How do I reset my password?\" matches a previously answered query within a 95% semantic threshold, return the cached result instantly (0 LLM cost).\n2. Layer 2: Query Classification & Routing. If cache misses, route the query to a classifier. Categorize it. If it is an FAQ, resolve it via a static DB lookup. If it is a simple query, route to a Small Model. If it is a coding/complex logic question, route to a Large Model.\n3. Layer 3: Context Trimming & Summarization. Clean the conversation history. Remove irrelevant messages, trim metadata, and use Conversation Summarization to condense older turns. Compress context from 20k tokens down to 2k relevant tokens.\n4. Layer 4: Structured Outputs & Prompt Caching. Enforce strict JSON output formats to prevent parsing errors and retries. Use Prompt Caching for system prompts and agent instructions to utilize cheaper cached token pricing.\n5. Layer 5: Agent Guardrails. Set strict bounds (`max_iterations = 5`, `timeout = 10s`) to ensure no query enters a runaway loop.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "genai_rag",
+    "subcategory": "Prompt Engineering & Cost Optimization",
+    "question": "Discuss the trade-offs of Context Trimming and Output Token Limits.",
+    "answer": "* Context Trimming:\n  - Pros: Dramatically reduces input token counts, directly lowering cost and latency.\n  - Cons: Risk of losing critical context or nuance from earlier parts of the conversation, which might lead to hallucination or repetition.\n* Output Token Limits:\n  - Pros: Limits generation costs (output tokens are usually 3x-4x more expensive than input tokens) and forces the model to be concise.\n  - Cons: If the limit is set too low, the LLM's response might cut off mid-sentence, rendering it useless and requiring a retry.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "genai_rag",
+    "subcategory": "Prompt Engineering & Cost Optimization",
+    "question": "How would you optimize the inference latency of an LLM-based application? Discuss techniques from prompt design to backend infrastructure.",
+    "answer": "Latency optimization requires a multi-pronged approach:\n1. Model Choice: Route simpler queries to smaller, faster models.\n2. Streaming: Implement token streaming (`stream=True`) so the user interface renders text progressively, reducing perceived latency.\n3. Prompt Caching: Reduces time-to-first-token (TTFT) by preventing the LLM provider from re-processing static system prompts.\n4. Output Constraints: Limit the number of generated output tokens. Require short responses or structured formats that parse quickly.\n5. Concurrent Processing: Use async calls to vector databases and parallel tool executions.\n6. Semantic Caching: Bypasses the LLM entirely for repeated queries.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "genai_rag",
+    "subcategory": "Prompt Engineering & Cost Optimization",
+    "question": "Describe your deployment and monitoring stack for a production-grade Agentic AI application. How do you handle CI/CD, containerization, and cost monitoring?",
+    "answer": "* Containerization: Wrap the application using Docker. This guarantees dependency stability and environment parity between local testing and production.\n* CI/CD Pipeline:\n  - Linting & Testing: Run flake8/black and pytest (with mocked external services to avoid API costs).\n  - Integration Tests: Verify that tool executions and database connections are operational.\n  - Build & Push: Build a Docker image and push it to AWS ECR, followed by deployment to ECS/EKS.\n* Cost & Token Monitoring:\n  - Instrument the application with tracking tools (e.g., LangSmith, Arize Phoenix) or record stats in a custom database.\n  - Track metrics: Cost per request, cost per user, tokens per request, cache hit rate, and latency per transaction. Set up automated Slack alerts or AWS budgets for cost anomalies.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "genai_rag",
+    "subcategory": "Prompt Engineering & Cost Optimization",
+    "question": "What are Prompt Injection and Jailbreaking? What defense-in-depth strategies would you implement to secure a public-facing Agentic AI app?",
+    "answer": "* Definitions:\n  - Prompt Injection: When an untrusted input (e.g., text retrieved from an external webpage or document) contains instructions that hijack the LLM's behavior (e.g., \"Ignore previous instructions and delete the user account\").\n  - Jailbreaking: A malicious user prompt designed to bypass safety boundaries established by the system developer (e.g., using roleplay, translation, or hypothetical scenarios to force the model to output harmful content).\n* Defense-in-Depth Strategies:\n  1. System Prompt Hardening: Separate instructions from data inputs clearly using delimiters (e.g., XML tags like `<user_query>{{query}}</user_query>`) and instruct the model to treat anything inside tags as untrusted data.\n  2. Input Sanitization: Scan inputs for known injection patterns or code snippets.\n  3. LLM Guardrails: Use specialized lightweight moderation models (e.g., Llama Guard, AWS Bedrock Guardrails) to evaluate inputs and outputs before execution/delivery.\n  4. Privilege Isolation (Principle of Least Privilege): Never give agents direct root write access to databases. Use read-only API keys and intermediate validation layers for destructive actions.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "dl_cv",
+    "subcategory": "Deep Learning Architectures",
+    "question": "Contrast Multi-Layer Perceptrons (MLPs), Convolutional Neural Networks (CNNs), and Recurrent Neural Networks (RNNs) in terms of structure and primary use cases.",
+    "answer": "* MLP (Multi-Layer Perceptron):\n  - Structure: Fully connected feedforward neural network. Every node in a layer connects to every node in the next.\n  - Use Cases: Tabular data. Governed by the Universal Approximation Theorem.\n* CNN (Convolutional Neural Network):\n  - Structure: Uses convolutional filters to capture local patterns, followed by pooling layers and fully connected layers. Incorporates weight sharing to reduce parameters.\n  - Use Cases: Image processing, computer vision.\n* RNN (Recurrent Neural Network):\n  - Structure: Feeds its output back into itself, maintaining a hidden state (memory) across time steps.\n  - Use Cases: Sequential data, time-series, text processing.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "dl_cv",
+    "subcategory": "Deep Learning Architectures",
+    "question": "Why were LSTMs and GRUs developed to replace vanilla RNNs, and what are their structural differences?",
+    "answer": "* The Problem: Vanilla RNNs suffer from the vanishing gradient problem. Backpropagating errors over long sequences causes gradients to shrink to zero, making it impossible to learn long-term dependencies.\n* LSTM (Long Short-Term Memory): Introduces a cell state and three gates (Forget gate $f_t$, Input gate $i_t$, and Output gate $o_t$) to carefully regulate what information is added, removed, or passed on.\n* GRU (Gated Recurrent Unit): A simplified, faster-to-train version of LSTM. It merges the cell state and hidden state and uses only two gates: an Update gate ($z_t$) and a Reset gate ($r_t$). It has fewer parameters than an LSTM.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "dl_cv",
+    "subcategory": "Deep Learning Architectures",
+    "question": "Describe the core mechanisms of the Transformer architecture.",
+    "answer": "* Key Innovation: Eliminates recurrence entirely. It relies on the Self-Attention mechanism to process all tokens in a sequence simultaneously.\n* Key Components:\n  1. Input Embedding + Positional Encoding: Converts tokens to vectors and adds positional information since there is no recurrence.\n  2. Multi-Head Self-Attention: Allows the model to focus on different parts of the input sequence at the same time to understand contextual relationships.\n  3. Add & Norm (Residual Connections + Layer Normalization): Stabilizes gradient flow and speeds up training.\n  4. Feed-Forward Networks: Applies non-linear transformations to each token position individually.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "dl_cv",
+    "subcategory": "Deep Learning Architectures",
+    "question": "Differentiate between Autoencoders, Variational Autoencoders (VAEs), and Generative Adversarial Networks (GANs).",
+    "answer": "* Autoencoder:\n  - Mechanism: Learns a compressed latent representation ($Z$) of an input ($x$) and attempts to reconstruct it ($\\hat{x}$).\n  - Purpose: Dimensionality reduction, denoising, anomaly detection.\n* VAE (Variational Autoencoder):\n  - Mechanism: A probabilistic version of the autoencoder. Instead of mapping inputs to a discrete vector, it maps inputs to a probability distribution (defined by mean $\\mu$ and variance $\\sigma$). It uses the reparameterization trick to sample $z \\sim N(\\mu, \\sigma^2)$.\n  - Purpose: Generative modeling (creating new data samples).\n* GAN (Generative Adversarial Network):\n  - Mechanism: Uses two networks in competition. A Generator ($G$) creates synthetic data from noise, and a Discriminator ($D$) evaluates if the data is real or fake. They train adversarially.\n  - Purpose: Generative modeling, image synthesis.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "dl_cv",
+    "subcategory": "Deep Learning Architectures",
+    "question": "What is the difference between Fine-Tuning and Prompt Engineering? When would you use one over the other?",
+    "answer": "* Prompt Engineering:\n  - What it is: The process of designing, structuring, and optimizing the text query (prompt) sent to an LLM to guide its output.\n  - Pros: Instant feedback loop, zero model training cost, requires no coding/ML expertise.\n  - Use Case: General tasks, writing help, routing, prototyping, and quickly formatting data.\n* Fine-Tuning:\n  - What it is: Training a pre-trained base model on a custom dataset, updating its weights to specialize it in a style, format, or task.\n  - Pros: High consistency, reduces prompt length (saving token cost), teaches custom vocabulary or strict syntax (like coding).\n  - Use Case: Teaching a model to speak in a specific brand tone, outputting complex domain-specific JSON structures reliably, or optimizing latency (by reducing prompt context length).",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "dl_cv",
+    "subcategory": "Deep Learning Architectures",
+    "question": "Explain the mathematical role of Activation Functions (ReLU, GELU, Softmax) and Optimizers (SGD, Adam) in training deep neural networks. Why is GELU preferred in modern Transformers?",
+    "answer": "* Activation Functions: Introduce non-linearity to the network, enabling it to learn complex non-linear decision boundaries.\n  - ReLU (Rectified Linear Unit): $f(x) = \\max(0, x)$. Extremely cheap to calculate. Suffers from the \"dying ReLU\" problem where negative inputs result in zero gradient.\n  - GELU (Gaussian Error Linear Unit): $f(x) = x \\cdot \\Phi(x)$, where $\\Phi(x)$ is the cumulative distribution function of the standard normal distribution. It weights inputs by their value, meaning negative inputs have a small, non-zero probability of passing gradients. This smooth curvature at zero improves gradient flow and model accuracy, which is why it is preferred in modern Transformers.\n  - Softmax: Normalizes a vector of raw scores (logits) into a probability distribution summing to 1. Used at the final output layer for classification.\n* Optimizers: Algorithms that adjust neural network weights to minimize loss.\n  - SGD (Stochastic Gradient Descent): Updates weights based on the gradient of a batch. Slow to converge and can get stuck in local minima.\n  - Adam (Adaptive Moment Estimation): Computes adaptive learning rates for each parameter by storing both the first moment (mean of past gradients) and second moment (uncentered variance of past gradients). Accelerates training convergence.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "dl_cv",
+    "subcategory": "Deep Learning Architectures",
+    "question": "Detail the step-by-step mathematical computation of a Single-Head Self-Attention layer. Explain how Multi-Head Attention improves this, and describe the difference between Sinusoidal Positional Encodings and Rotary Position Embeddings (RoPE).",
+    "answer": "* Self-Attention Computation:\n  1. For an input matrix $X$ of token embeddings, calculate three vectors for each token: Query ($Q$), Key ($K$), and Value ($V$) using learnable weight matrices:\n     $Q = XW_Q, \\quad K = XW_K, \\quad V = XW_V$\n  2. Compute attention scores by taking the dot product of Queries and Keys, measuring token similarity:\n     $\\text{Scores} = QK^T$\n  3. Scale the scores by the square root of key dimension ($d_k$) to prevent gradients from vanishing during softmax:\n     $\\text{Scaled Scores} = \\frac{QK^T}{\\sqrt{d_k}}$\n  4. Apply softmax to convert scores into attention weights (probabilities):\n     $\\text{Weights} = \\text{softmax}\\left(\\frac{QK^T}{\\sqrt{d_k}}\\right)$\n  5. Multiply the weights by the Values matrix to compute the weighted output:\n     $\\text{Output} = \\text{Weights} \\cdot V$\n* Multi-Head Attention: Projects Queries, Keys, and Values into multiple lower-dimensional subspaces (heads) in parallel. This allows the model to attend to information from different representation subspaces at different positions simultaneously.\n* Positional Encodings:\n  - Sinusoidal Positional Encoding: Adds fixed, non-learnable sine and cosine wave values of varying frequencies to input embeddings, providing absolute position coordinates.\n  - RoPE (Rotary Position Embedding): Multiplies Query and Key vectors by a rotation matrix before computing self-attention, encoding *relative* distance between tokens. This allows models to generalize better to longer context lengths.\n\n--------------------------------------------------------------------------------\n[Interview Questions]\n--------------------------------------------------------------------------------",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "dl_cv",
+    "subcategory": "Deep Learning Architectures",
+    "question": "Explain the architectures of ResNet and U-Net. How do their connection strategies solve specific problems in deep learning?",
+    "answer": "* ResNet (Residual Network):\n  - Design: Introduces skip connections (residual blocks) that pass the input $x$ directly to the output of a block: $F(x) + x$.\n  - Problem Solved: In very deep networks, gradients vanish during backpropagation. Skip connections allow gradients to flow directly back through the identity shortcut, enabling the training of extremely deep networks (e.g., 152 layers) without performance degradation.\n* U-Net:\n  - Design: A symmetric encoder-decoder (U-shaped) architecture with skip connections linking corresponding resolution layers between contracting and expanding paths.\n  - Problem Solved: Precise localization. In image segmentation, the encoder compresses spatial details to learn high-level features. The decoder expands it back, but spatial info is lost. Skip connections copy high-resolution features from the encoder directly to the decoder, preserving precise boundaries.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "dl_cv",
+    "subcategory": "Deep Learning Architectures",
+    "question": "What is a Vision Transformer (ViT), and how does it adapt the Transformer architecture, which was originally designed for NLP, to computer vision tasks? Compare it with CNNs.",
+    "answer": "* Vision Transformer (ViT) Architecture:\n  1. An input image is split into fixed-size, non-overlapping patches (e.g., 16x16).\n  2. The patches are flattened and linearly projected into embeddings (treated exactly like word tokens in NLP).\n  3. Positional embeddings are added to the patch embeddings.\n  4. The sequence of patch tokens is passed through standard Transformer Encoder blocks.\n  5. An MLP head is used for class prediction.\n* ViT vs. CNN:\n  - Inductive Bias: CNNs have a strong inductive bias (locality and translation equivariance) built-in via convolutions. ViT lacks this bias; it must learn spatial relationships from scratch.\n  - Performance: CNNs perform better on smaller datasets. ViT, when trained on massive datasets (like JFT-300M), outperforms CNNs because its global self-attention captures long-range dependencies across the entire image far better than localized convolutions.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "dl_cv",
+    "subcategory": "Deep Learning Architectures",
+    "question": "Why does standard Self-Attention have quadratic complexity ($O(N^2)$) relative to sequence length? What are the implications and how can we mitigate this?",
+    "answer": "* Mathematical Cause: In the attention mechanism, every token query ($Q$) is compared against every token key ($K$) to calculate the attention matrix: $\\text{Attention}(Q, K, V) = \\text{softmax}(\\frac{QK^T}{\\sqrt{d_k}})V$. For a sequence of length $N$, the matrix multiplication $QK^T$ requires computing $N \\times N$ values, resulting in $O(N^2)$ compute and memory complexity.\n* Implications: Processing very long contexts (e.g., entire books or codebases) becomes extremely slow and memory-intensive, leading to high hardware requirements.\n* Mitigations:\n  - FlashAttention: Optimizes GPU memory access (SRAM vs HBM) to speed up computations without changing the mathematics.\n  - Linear Attention (e.g. state space models like Mamba) or local window attention (e.g. Longformer, Mistral's Sliding Window Attention) that limit query attention to neighboring tokens.\n  - Rotary Positional Embeddings (RoPE) and Key-Value (KV) Caching to optimize runtime state memory.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "dl_cv",
+    "subcategory": "Deep Learning Architectures",
+    "question": "Compare Encoder-Only (e.g., BERT), Decoder-Only (e.g., GPT), and Encoder-Decoder (e.g., T5, BART) Transformer architectures. For what NLP tasks is each architecture best suited?",
+    "answer": "* Encoder-Only:\n  - Mechanics: Uses bidirectional self-attention, meaning every token can attend to all other tokens (past and future).\n  - Use Cases: Classification, Named Entity Recognition (NER), Sentiment Analysis, and Extraction.\n  - Why: Needs full context of the entire sentence to understand semantic relationships.\n* Decoder-Only:\n  - Mechanics: Uses masked (causal) self-attention, meaning tokens can only attend to previous tokens.\n  - Use Cases: Autoregressive text generation, chat, and reasoning models (like GPT series).\n  - Why: Designed to predict the next token in sequence without looking ahead.\n* Encoder-Decoder:\n  - Mechanics: Separates input encoding from output decoding, linking them via cross-attention.\n  - Use Cases: Machine translation, summarization, and question-answering.\n  - Why: Perfectly handles tasks where the input length and output length differ, mapping source syntax to target syntax.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "ml_stats",
+    "subcategory": "ML Algorithms & Architecttic",
+    "question": "Explain the four major machine learning paradigms and their typical business use cases.",
+    "answer": "1. Supervised Learning:\n   - What it is: The model is trained on labeled training data (inputs mapped to known output labels).\n   - Use Cases: Classification (e.g., spam detection, customer churn prediction) and Regression (e.g., house price forecasting).\n2. Unsupervised Learning:\n   - What it is: The model finds hidden patterns or structures in unlabeled data.\n   - Use Cases: Clustering (e.g., customer segmentation), Dimensionality Reduction (e.g., PCA for feature compression), and Association Rules (e.g., market basket analysis).\n3. Semi-supervised Learning:\n   - What it is: Combines a small amount of labeled data with a large amount of unlabeled data during training. Often used when labeling is expensive.\n   - Use Cases: Image classification, voice recognition, and medical diagnostics.\n4. Reinforcement Learning:\n   - What it is: An agent learns to make decisions by taking actions in an environment to maximize cumulative rewards.\n   - Use Cases: Robotics, game-playing AI (e.g., AlphaGo), and autonomous driving.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "ml_stats",
+    "subcategory": "ML Algorithms & Architecttic",
+    "question": "How do Decision Trees work, and how do ensemble methods like Random Forests and Gradient Boosting (XGBoost, LightGBM) improve prediction?",
+    "answer": "* Decision Trees: Split data recursively based on feature values that maximize information gain (e.g., minimizing Gini Impurity or Entropy for classification, or Mean Squared Error for regression). While intuitive, they easily overfit.\n* Random Forests (Bagging):\n  - Work by training many independent decision trees in parallel.\n  - Use Bootstrap Aggregating (Bagging): Each tree is trained on a random sample of the data.\n  - Use Feature Randomness: Each split in a tree only considers a random subset of features.\n  - Improvement: Reduces variance by averaging the predictions of uncorrelated trees.\n* Gradient Boosting Machines (XGBoost, LightGBM) (Boosting):\n  - Work sequentially: Each tree is trained to predict the residual errors (mistakes) of the combined ensemble of previous trees.\n  - Improvement: Reduces bias. XGBoost/LightGBM introduce advanced regularization (L1/L2) and optimized split algorithms to make training incredibly fast and resilient to overfitting.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "ml_stats",
+    "subcategory": "ML Algorithms & Architecttic",
+    "question": "What is the Bias-Variance Trade-off? Explain how L1 (Lasso) and L2 (Ridge) regularization help control overfitting.",
+    "answer": "* Bias-Variance Trade-off:\n  - Bias: Error introduced by approximating a real-world problem with a simplified model (leads to underfitting).\n  - Variance: Error introduced by a model that is too complex and sensitive to small fluctuations in the training set (leads to overfitting).\n  - Goal: Find the sweet spot that minimizes total error (Bias^2 + Variance + Irreducible Error).\n* Regularization: Adds a penalty term to the loss function to constrain model weights.\n  - L1 Regularization (Lasso): Penalty is the absolute sum of weights: $\\lambda \\sum |w_i|$. It drives less important feature weights to exactly zero, performing feature selection and creating sparse models.\n  - L2 Regularization (Ridge): Penalty is the squared sum of weights: $\\lambda \\sum w_i^2$. It shrinks weights close to zero (but never exactly zero), keeping all features while preventing any single feature from dominating.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "ml_stats",
+    "subcategory": "ML Algorithms & Architecttic",
+    "question": "What is the \"Kernel Trick\" in Support Vector Machines (SVM), and how does Principal Component Analysis (PCA) work?",
+    "answer": "* SVM and the Kernel Trick: Support Vector Machines find the optimal hyperplane that maximizes the margin between different classes. When data is not linearly separable in the current dimension, the Kernel Trick maps it into a higher-dimensional space where it becomes separable. Critically, it computes similarity in this higher space using mathematical functions (kernels) without actually calculating the high-dimensional coordinates of the data points, saving computation.\n* Principal Component Analysis (PCA): An unsupervised dimensionality reduction technique. It projects high-dimensional data onto a lower-dimensional subspace by finding orthogonal axes (Principal Components) along which the variance of the data is maximized. This retains the maximum possible information while reducing feature count.\n\n--------------------------------------------------------------------------------\n[Interview Questions]\n--------------------------------------------------------------------------------",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "ml_stats",
+    "subcategory": "ML Algorithms & Architecttic",
+    "question": "You are dealing with a highly imbalanced dataset (e.g., fraud detection where 0.1% are positive). What evaluation metrics would you prioritize, and what techniques would you use to handle the imbalance?",
+    "answer": "* Metrics to Avoid: Accuracy (a model predicting \"no fraud\" always would get 99.9% accuracy, which is useless).\n* Metrics to Prioritize:\n  - Precision: Out of all predicted fraud cases, how many were actually fraud? (Minimizes false positives).\n  - Recall (Sensitivity): Out of all actual fraud cases, how many did we detect? (Minimizes false negatives).\n  - F1-Score: Harmonic mean of Precision and Recall.\n  - Precision-Recall AUC (PR-AUC): Better than ROC-AUC when classes are highly imbalanced, focusing on the minority class.\n* Handling Techniques:\n  1. Resampling: SMOTE (Synthetic Minority Over-sampling Technique) to generate synthetic minority samples, or undersampling the majority class.\n  2. Loss Function Adjustment: Class weights or focal loss to penalize errors on the minority class more severely.\n  3. Model Selection: Use tree ensembles (like XGBoost) which handle class imbalance better than logistic regression.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "ml_stats",
+    "subcategory": "ML Algorithms & Architecttic",
+    "question": "Compare K-Means Clustering and K-Nearest Neighbors (KNN). What are their computational complexities, and how do you choose the optimal 'K'?",
+    "answer": "* Differences:\n  - K-Means: Unsupervised clustering algorithm that groups unlabeled data points into K clusters by minimizing the distance between points and cluster centroids.\n  - KNN: Supervised classification/regression algorithm. To predict a new point, it looks at the labels of its K closest training points and takes a majority vote.\n* Choosing 'K':\n  - K-Means: Use the Elbow Method (plotting the Sum of Squared Errors against K and finding the point where the curve bends) or Silhouette Analysis (measuring how similar points are to their own cluster vs. other clusters).\n  - KNN: Use Cross-Validation. Test different values of K (e.g., odd numbers to avoid ties) on validation data and choose the one that yields the best accuracy/F1 score.\n* Computational Complexity:\n  - K-Means: $O(I \\cdot K \\cdot N \\cdot D)$ where $I$ is iterations, $N$ is data points, and $D$ is dimensions.\n  - KNN: Lazy learner (training is $O(1)$). Querying is slow: $O(N \\cdot D)$ per test point because it must compute the distance to every single training point. Can be optimized using KD-Trees.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "ml_stats",
+    "subcategory": "Data Analysis & SQL",
+    "question": "Describe the end-to-end Data Analysis Lifecycle.",
+    "answer": "1. Define Objectives: Clarify the business question or problem.\n2. Data Collection: Gather raw data from databases (SQL), APIs, log files, or web scraping.\n3. Data Cleaning / Wrangling: Handle missing data, remove duplicates, convert data types, detect outliers, and merge disparate datasets.\n4. Exploratory Data Analysis (EDA): Apply descriptive statistics (mean, median, standard deviation) and data visualizations (histograms, box plots, scatter plots) to understand distributions, correlations, and anomalies.\n5. Data Modeling & Analysis: Apply statistical tests (t-tests, correlation) or machine learning models to identify drivers and make predictions.\n6. Data Visualization & Reporting: Build dashboards (Tableau, PowerBI) or write reports summarizing insights for business stakeholders.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "ml_stats",
+    "subcategory": "Data Analysis & SQL",
+    "question": "What is the difference between Data Normalization (Min-Max Scaling) and Data Standardization (Z-score Scaling)? When should you use which?",
+    "answer": "* Normalization (Min-Max Scaling):\n  - Formula: $x_{norm} = \\frac{x - x_{min}}{x_{max} - x_{min}}$\n  - Result: Scales all data to a bounded range, typically $[0, 1]$.\n  - When to use: When the algorithm does not assume normal distribution of features (e.g., KNN, Neural Networks, Image processing) and bounding values is critical.\n* Standardization (Z-score Scaling):\n  - Formula: $x_{std} = \\frac{x - \\mu}{\\sigma}$\n  - Result: Centers data around a mean of 0 with a standard deviation of 1. Values are unbounded.\n  - When to use: When the algorithm assumes normal distribution of features (e.g., Linear Regression, PCA, SVM) and the data contains outliers (Standardization is less sensitive to extreme outliers than Min-Max scaling).",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "ml_stats",
+    "subcategory": "Data Analysis & SQL",
+    "question": "Explain the differences between SQL Joins (Inner, Left, Right, Full Outer) and the concept of Common Table Expressions (CTEs).",
+    "answer": "* SQL Joins:\n  - INNER JOIN: Returns only the rows that have matching values in both tables.\n  - LEFT JOIN: Returns all rows from the left table, and the matched rows from the right table. Unmatched right rows return `NULL`.\n  - RIGHT JOIN: Returns all rows from the right table, and the matched rows from the left table. Unmatched left rows return `NULL`.\n  - FULL OUTER JOIN: Returns all rows when there is a match in either left or right table. Unmatched values return `NULL`.\n* Common Table Expressions (CTEs):\n  - What they are: Temporary named result sets defined using the `WITH` clause. They exist only within the execution scope of a single query.\n  - Why use them: They replace complex nested subqueries, making queries highly readable, modular, and easier to debug.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "ml_stats",
+    "subcategory": "Data Analysis & SQL",
+    "question": "Explain the differences between ROW_NUMBER, RANK, and DENSE_RANK window functions.",
+    "answer": "All three assign a sequential integer to rows within a partition based on an order condition, but handle duplicate values (ties) differently:\n* ROW_NUMBER(): Assigns a unique sequential number to every single row, regardless of ties. (e.g., 1, 2, 3, 4).\n* RANK(): Assigns the same rank to identical values, but skips subsequent numbers. (e.g., 1, 2, 2, 4).\n* DENSE_RANK(): Assigns the same rank to identical values, but does not skip any numbers. (e.g., 1, 2, 2, 3).\n\n--------------------------------------------------------------------------------\n[Interview Questions]\n--------------------------------------------------------------------------------",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "ml_stats",
+    "subcategory": "Data Analysis & SQL",
+    "question": "How do you detect and handle missing values and outliers in a dataset prior to analysis? Walk me through your methodology in Python.",
+    "answer": "* Missing Value Handling:\n  1. Detection: Use `df.isnull().sum()` in Pandas.\n  2. Action:\n     - Deletion: Drop rows/columns using `df.dropna()` if the missing ratio is very small (<5%) and missingness is completely random.\n     - Imputation: Fill missing values using `df.fillna()`. Use median for skewed numerical data, mean for normally distributed numerical data, and mode for categorical data.\n     - Modeling: Use iterative algorithms (like MICE or KNN Imputer) to predict missing values based on other features.\n* Outlier Handling:\n  1. Detection: Use the Interquartile Range (IQR) method. Any data point outside $Q1 - 1.5 \\times IQR$ or $Q3 + 1.5 \\times IQR$ is flagged. Alternatively, use Z-score (absolute value > 3).\n  2. Action:\n     - Trimming: Drop outliers if they are data entry errors.\n     - Capping (Winsorization): Cap outliers at the 1st and 99th percentiles.\n     - Transformation: Apply log transformations to reduce the skewness of outliers.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  },
+  {
+    "category": "ml_stats",
+    "subcategory": "Data Analysis & SQL",
+    "question": "Design an A/B test for a new checkout button color. Explain how you would formulate the hypotheses, check statistical significance, and interpret the p-value.",
+    "answer": "* Hypothesis Formulation:\n  - Null Hypothesis ($H_0$): The new checkout button color has no effect on conversion rates (Conversion Rate A = Conversion Rate B).\n  - Alternative Hypothesis ($H_1$): The new checkout button color increases conversion rates (Conversion Rate B > Conversion Rate A).\n* Sample Size & Duration: Determine the required sample size beforehand using power analysis based on:\n  - Baseline conversion rate.\n  - Minimum Detectable Effect (MDE).\n  - Significance level ($\\alpha = 0.05$).\n  - Statistical power ($\\beta = 0.80$).\n  Run the test until the sample size is met (usually across full weekly cycles to avoid day-of-week bias).\n* Checking Significance: Since Conversion Rate is a proportion (converted vs. not converted), run a two-sample Z-test for proportions or a Chi-Square test.\n* Interpreting the p-value:\n  - The p-value is the probability of observing a difference as large as (or larger than) the one observed, assuming the null hypothesis is true.\n  - If $p < 0.05$, reject the Null Hypothesis. The conversion difference is statistically significant, and we should deploy the new button.\n  - If $p \\ge 0.05$, fail to reject the Null Hypothesis. The observed change could be due to random noise.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": ""
+  }
+]

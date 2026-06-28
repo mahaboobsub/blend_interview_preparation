@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Interview Prep Hub - Premium Study Portal</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Ambient Background Gradients -->
+    <div class="glow-bg glow-1"></div>
+    <div class="glow-bg glow-2"></div>
+
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fa-solid fa-graduation-cap logo-icon"></i>
+                    <span>PrepHub</span>
+                </div>
+                <p class="subtitle">AI & Fullstack Study Portal</p>
+            </div>
+
+            <!-- Search Section -->
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="search-input" placeholder="Search questions, concepts...">
+            </div>
+
+            <!-- Overall Progress -->
+            <div class="progress-section">
+                <div class="progress-labels">
+                    <span>Overall Progress</span>
+                    <span id="progress-percent">0%</span>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill" id="progress-fill"></div>
+                </div>
+                <div class="progress-stats">
+                    <span id="progress-fraction">0/0 Completed</span>
+                </div>
+            </div>
+
+            <!-- Category Navigation -->
+            <nav class="category-nav">
+                <h3>Subject Categories</h3>
+                <ul id="category-list">
+                    <!-- Categories will be rendered dynamically -->
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Dashboard Bar -->
+            <header class="top-bar">
+                <h1 id="current-category-title">Study Dashboard</h1>
+                <div class="actions">
+                    <button class="btn btn-primary" id="toggle-flashcard-mode">
+                        <i class="fa-solid fa-bolt"></i>
+                        <span>Toggle Flashcard Mode</span>
+                    </button>
+                    <button class="btn btn-secondary" id="reset-progress">
+                        <i class="fa-solid fa-rotate-left"></i>
+                        <span>Reset Progress</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Cards Container -->
+            <section class="cards-view" id="cards-container">
+                <!-- Welcome Dashboard (shown initially) -->
+                <div class="welcome-dashboard" id="welcome-dashboard">
+                    <div class="hero-card">
+                        <h2>Welcome to your Premium AI Prep Portal</h2>
+                        <p>Consolidated study guide containing de-duplicated high-yield questions covering SQL, Database Design, Data Structures & Algorithms, Machine Learning, Deep Learning, Generative AI, RAG pipelines, and Fullstack systems.</p>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <i class="fa-solid fa-database stat-icon blue"></i>
+                            <div class="stat-info">
+                                <h3 id="stat-sql">0</h3>
+                                <p>SQL & DBMS Questions</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fa-solid fa-code stat-icon purple"></i>
+                            <div class="stat-info">
+                                <h3 id="stat-dsa">0</h3>
+                                <p>DSA Practice Cases</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fa-solid fa-brain stat-icon pink"></i>
+                            <div class="stat-info">
+                                <h3 id="stat-ml">0</h3>
+                                <p>ML, Stats & DL Questions</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fa-solid fa-robot stat-icon green"></i>
+                            <div class="stat-info">
+                                <h3 id="stat-genai">0</h3>
+                                <p>GenAI & RAG Concepts</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="quick-start">
+                        <h3>Select a category in the sidebar to begin studying!</h3>
+                        <p>Tip: Turn on **Flashcard Mode** to hide answers by default and test your knowledge before revealing them.</p>
+                    </div>
+                </div>
+
+                <!-- Dynamic Q&A Cards Rendered Here -->
+            </section>
+        </main>
+    </div>
+
+    <!-- Data and Core JS App -->
+    <script src="questions_data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
