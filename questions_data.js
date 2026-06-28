@@ -2641,6 +2641,39 @@ window.QUESTIONS_DATA = [
     "id": 240
   },
   {
+    "category": "devops_projects",
+    "subcategory": "Projects",
+    "question": "Walk me through the architecture and security features of your Password Manager project.",
+    "answer": "* **Overview**: I built a secure Password Manager application that allows users to store, retrieve, and generate strong passwords.\n* **Architecture**: \n  - **Frontend**: A React or vanilla JS interface for users to log in, view their vault, and add new credentials.\n  - **Backend**: A Node.js/Express or Python/FastAPI backend to handle authentication and encrypted data storage.\n  - **Database**: PostgreSQL or MongoDB to store user accounts and their encrypted password vaults.\n* **Core Security Features**:\n  1. **Master Password**: Users authenticate with a Master Password that is never stored in plaintext.\n  2. **Zero-Knowledge Architecture (Client-Side Encryption)**: The actual passwords in the vault are encrypted on the client side before being sent to the server. The server only stores the encrypted ciphertext and never sees the decryption key.\n  3. **Data in Transit**: Enforced HTTPS/TLS for all communications to prevent Man-In-The-Middle (MITM) attacks.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": "",
+    "id": 241
+  },
+  {
+    "category": "devops_projects",
+    "subcategory": "Projects",
+    "question": "How did you ensure that user passwords were safe from both database leaks and internal server compromises?",
+    "answer": "* **Authentication (Protecting the Master Password)**: \n  - When a user signs up, their Master Password is hashed using a strong key derivation function like **bcrypt** or **PBKDF2** with a unique random **salt**. \n  - If the database is leaked, attackers only get the hashes and salts, making brute-forcing computationally expensive.\n* **Vault Encryption (Protecting Stored Passwords)**:\n  - I used **AES-256-GCM** (Advanced Encryption Standard with Galois/Counter Mode), which provides both confidentiality and data integrity (authenticated encryption).\n  - The encryption key is derived from the user's Master Password (using PBKDF2). \n  - Crucially, encryption and decryption happen **on the client side** (in the browser). The backend only receives and stores the AES-encrypted strings. Therefore, even if the server is compromised or an admin looks at the database, they cannot read the user's saved passwords (Zero-Knowledge).",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": "",
+    "id": 242
+  },
+  {
+    "category": "devops_projects",
+    "subcategory": "Projects",
+    "question": "How did you manage user sessions and authentication in your Password Manager?",
+    "answer": "* **JWT (JSON Web Tokens)**: Upon successful login (verifying the bcrypt hash of the Master Password), the server issues a JWT.\n* **Security Measures for JWT**:\n  1. **Short Expiration**: Tokens expire quickly (e.g., 15 minutes) to limit the window of opportunity if a token is stolen.\n  2. **Refresh Tokens**: Used an HttpOnly, Secure cookie to store a longer-lived refresh token, which is used to obtain new access tokens without re-entering the Master Password.\n  3. **HttpOnly Cookies**: By storing the JWT or refresh token in HttpOnly cookies, I protected the session against Cross-Site Scripting (XSS) attacks, as JavaScript cannot access the token.\n  4. **CSRF Protection**: Implemented Anti-CSRF tokens to ensure that requests to modify the vault originated from the legitimate frontend.",
+    "is_coding": false,
+    "code_sql": "",
+    "code_java": "",
+    "code_python": "",
+    "id": 243
+  },
+  {
     "category": "vidvantu",
     "subcategory": "Vidvantu Architecture & FastAPI",
     "question": "How does FastAPI handle asynchronous requests, and why was it chosen for this project?",
@@ -2649,7 +2682,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 241
+    "id": 244
   },
   {
     "category": "vidvantu",
@@ -2660,7 +2693,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 242
+    "id": 245
   },
   {
     "category": "vidvantu",
@@ -2671,7 +2704,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 243
+    "id": 246
   },
   {
     "category": "vidvantu",
@@ -2682,7 +2715,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 244
+    "id": 247
   },
   {
     "category": "vidvantu",
@@ -2693,7 +2726,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 245
+    "id": 248
   },
   {
     "category": "vidvantu",
@@ -2704,7 +2737,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 246
+    "id": 249
   },
   {
     "category": "vidvantu",
@@ -2715,7 +2748,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 247
+    "id": 250
   },
   {
     "category": "vidvantu",
@@ -2726,7 +2759,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 248
+    "id": 251
   },
   {
     "category": "vidvantu",
@@ -2737,7 +2770,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 249
+    "id": 252
   },
   {
     "category": "vidvantu",
@@ -2748,7 +2781,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 250
+    "id": 253
   },
   {
     "category": "vidvantu",
@@ -2759,7 +2792,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 251
+    "id": 254
   },
   {
     "category": "vidvantu",
@@ -2770,7 +2803,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 252
+    "id": 255
   },
   {
     "category": "vidvantu",
@@ -2781,7 +2814,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 253
+    "id": 256
   },
   {
     "category": "vidvantu",
@@ -2792,7 +2825,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 254
+    "id": 257
   },
   {
     "category": "vidvantu",
@@ -2803,7 +2836,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 255
+    "id": 258
   },
   {
     "category": "vidvantu",
@@ -2814,7 +2847,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 256
+    "id": 259
   },
   {
     "category": "vidvantu",
@@ -2825,7 +2858,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 257
+    "id": 260
   },
   {
     "category": "vidvantu",
@@ -2836,7 +2869,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 258
+    "id": 261
   },
   {
     "category": "vidvantu",
@@ -2847,7 +2880,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 259
+    "id": 262
   },
   {
     "category": "vidvantu",
@@ -2858,7 +2891,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 260
+    "id": 263
   },
   {
     "category": "vidvantu",
@@ -2869,7 +2902,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 261
+    "id": 264
   },
   {
     "category": "vidvantu",
@@ -2880,7 +2913,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 262
+    "id": 265
   },
   {
     "category": "vidvantu",
@@ -2891,7 +2924,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 263
+    "id": 266
   },
   {
     "category": "vidvantu",
@@ -2902,7 +2935,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 264
+    "id": 267
   },
   {
     "category": "vidvantu",
@@ -2913,7 +2946,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 265
+    "id": 268
   },
   {
     "category": "vidvantu",
@@ -2924,7 +2957,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 266
+    "id": 269
   },
   {
     "category": "vidvantu",
@@ -2935,7 +2968,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 267
+    "id": 270
   },
   {
     "category": "vidvantu",
@@ -2946,7 +2979,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 268
+    "id": 271
   },
   {
     "category": "vidvantu",
@@ -2957,7 +2990,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 269
+    "id": 272
   },
   {
     "category": "vidvantu",
@@ -2968,7 +3001,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 270
+    "id": 273
   },
   {
     "category": "vidvantu",
@@ -2979,7 +3012,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 271
+    "id": 274
   },
   {
     "category": "vidvantu",
@@ -2990,7 +3023,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 272
+    "id": 275
   },
   {
     "category": "vidvantu",
@@ -3001,7 +3034,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 273
+    "id": 276
   },
   {
     "category": "vidvantu",
@@ -3012,7 +3045,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 274
+    "id": 277
   },
   {
     "category": "vidvantu",
@@ -3023,7 +3056,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 275
+    "id": 278
   },
   {
     "category": "vidvantu",
@@ -3034,7 +3067,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 276
+    "id": 279
   },
   {
     "category": "vidvantu",
@@ -3045,7 +3078,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 277
+    "id": 280
   },
   {
     "category": "vidvantu",
@@ -3056,7 +3089,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 278
+    "id": 281
   },
   {
     "category": "vidvantu",
@@ -3067,7 +3100,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 279
+    "id": 282
   },
   {
     "category": "vidvantu",
@@ -3078,7 +3111,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 280
+    "id": 283
   },
   {
     "category": "vidvantu",
@@ -3089,7 +3122,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 281
+    "id": 284
   },
   {
     "category": "vidvantu",
@@ -3100,7 +3133,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 282
+    "id": 285
   },
   {
     "category": "vidvantu",
@@ -3111,7 +3144,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 283
+    "id": 286
   },
   {
     "category": "vidvantu",
@@ -3122,7 +3155,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 284
+    "id": 287
   },
   {
     "category": "vidvantu",
@@ -3133,7 +3166,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 285
+    "id": 288
   },
   {
     "category": "vidvantu",
@@ -3144,7 +3177,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 286
+    "id": 289
   },
   {
     "category": "vidvantu",
@@ -3155,7 +3188,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 287
+    "id": 290
   },
   {
     "category": "vidvantu",
@@ -3166,7 +3199,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 288
+    "id": 291
   },
   {
     "category": "vidvantu",
@@ -3177,7 +3210,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 289
+    "id": 292
   },
   {
     "category": "vidvantu",
@@ -3188,7 +3221,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 290
+    "id": 293
   },
   {
     "category": "genai_rag",
@@ -3199,7 +3232,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 291
+    "id": 294
   },
   {
     "category": "genai_rag",
@@ -3210,7 +3243,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 292
+    "id": 295
   },
   {
     "category": "genai_rag",
@@ -3221,7 +3254,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 293
+    "id": 296
   },
   {
     "category": "genai_rag",
@@ -3232,7 +3265,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 294
+    "id": 297
   },
   {
     "category": "genai_rag",
@@ -3243,7 +3276,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 295
+    "id": 298
   },
   {
     "category": "genai_rag",
@@ -3254,7 +3287,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 296
+    "id": 299
   },
   {
     "category": "genai_rag",
@@ -3265,7 +3298,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 297
+    "id": 300
   },
   {
     "category": "genai_rag",
@@ -3276,7 +3309,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 298
+    "id": 301
   },
   {
     "category": "genai_rag",
@@ -3287,7 +3320,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 299
+    "id": 302
   },
   {
     "category": "genai_rag",
@@ -3298,7 +3331,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "import asyncio\nfrom langchain_openai import ChatOpenAI\n\nasync def run_queries():\n    llm = ChatOpenAI()\n    tasks = [llm.ainvoke(\"Query 1\"), llm.ainvoke(\"Query 2\")]\n    results = await asyncio.gather(*tasks)\n    return results",
-    "id": 300
+    "id": 303
   },
   {
     "category": "genai_rag",
@@ -3309,7 +3342,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "import pytest\nfrom unittest.mock import MagicMock\nfrom langchain.tools import BaseTool\n\n@pytest.fixture\ndef mock_db_tool():\n    # Mocking the actual database execution logic inside the tool\n    tool = MagicMock(spec=BaseTool)\n    tool.name = \"db_search\"\n    tool.run.return_value = '{\"status\": \"success\", \"data\": \"Mocked DB Result\"}'\n    return tool\n\ndef test_agent_with_mock(mock_db_tool):\n    result = mock_db_tool.run(\"test query\")\n    assert \"Mocked DB Result\" in result",
-    "id": 301
+    "id": 304
   },
   {
     "category": "genai_rag",
@@ -3320,7 +3353,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 302
+    "id": 305
   },
   {
     "category": "genai_rag",
@@ -3331,7 +3364,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 303
+    "id": 306
   },
   {
     "category": "genai_rag",
@@ -3342,7 +3375,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 304
+    "id": 307
   },
   {
     "category": "genai_rag",
@@ -3353,7 +3386,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 305
+    "id": 308
   },
   {
     "category": "genai_rag",
@@ -3364,7 +3397,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 306
+    "id": 309
   },
   {
     "category": "genai_rag",
@@ -3375,7 +3408,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 307
+    "id": 310
   },
   {
     "category": "genai_rag",
@@ -3386,7 +3419,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 308
+    "id": 311
   },
   {
     "category": "genai_rag",
@@ -3397,7 +3430,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 309
+    "id": 312
   },
   {
     "category": "genai_rag",
@@ -3408,7 +3441,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 310
+    "id": 313
   },
   {
     "category": "genai_rag",
@@ -3419,7 +3452,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 311
+    "id": 314
   },
   {
     "category": "genai_rag",
@@ -3430,7 +3463,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 312
+    "id": 315
   },
   {
     "category": "genai_rag",
@@ -3441,7 +3474,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 313
+    "id": 316
   },
   {
     "category": "genai_rag",
@@ -3452,7 +3485,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 314
+    "id": 317
   },
   {
     "category": "genai_rag",
@@ -3463,7 +3496,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 315
+    "id": 318
   },
   {
     "category": "genai_rag",
@@ -3474,7 +3507,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 316
+    "id": 319
   },
   {
     "category": "genai_rag",
@@ -3485,7 +3518,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 317
+    "id": 320
   },
   {
     "category": "genai_rag",
@@ -3496,7 +3529,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 318
+    "id": 321
   },
   {
     "category": "genai_rag",
@@ -3507,7 +3540,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 319
+    "id": 322
   },
   {
     "category": "genai_rag",
@@ -3518,7 +3551,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 320
+    "id": 323
   },
   {
     "category": "genai_rag",
@@ -3529,7 +3562,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 321
+    "id": 324
   },
   {
     "category": "genai_rag",
@@ -3540,7 +3573,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 322
+    "id": 325
   },
   {
     "category": "genai_rag",
@@ -3551,7 +3584,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 323
+    "id": 326
   },
   {
     "category": "genai_rag",
@@ -3562,7 +3595,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 324
+    "id": 327
   },
   {
     "category": "genai_rag",
@@ -3573,7 +3606,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 325
+    "id": 328
   },
   {
     "category": "dl_cv",
@@ -3584,7 +3617,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 326
+    "id": 329
   },
   {
     "category": "dl_cv",
@@ -3595,7 +3628,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 327
+    "id": 330
   },
   {
     "category": "dl_cv",
@@ -3606,7 +3639,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 328
+    "id": 331
   },
   {
     "category": "dl_cv",
@@ -3617,7 +3650,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 329
+    "id": 332
   },
   {
     "category": "dl_cv",
@@ -3628,7 +3661,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 330
+    "id": 333
   },
   {
     "category": "dl_cv",
@@ -3639,7 +3672,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 331
+    "id": 334
   },
   {
     "category": "dl_cv",
@@ -3650,7 +3683,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 332
+    "id": 335
   },
   {
     "category": "dl_cv",
@@ -3661,7 +3694,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 333
+    "id": 336
   },
   {
     "category": "dl_cv",
@@ -3672,7 +3705,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 334
+    "id": 337
   },
   {
     "category": "dl_cv",
@@ -3683,7 +3716,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 335
+    "id": 338
   },
   {
     "category": "dl_cv",
@@ -3694,7 +3727,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 336
+    "id": 339
   },
   {
     "category": "ml_stats",
@@ -3705,7 +3738,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 337
+    "id": 340
   },
   {
     "category": "ml_stats",
@@ -3716,7 +3749,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 338
+    "id": 341
   },
   {
     "category": "ml_stats",
@@ -3727,7 +3760,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 339
+    "id": 342
   },
   {
     "category": "ml_stats",
@@ -3738,7 +3771,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 340
+    "id": 343
   },
   {
     "category": "ml_stats",
@@ -3749,7 +3782,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 341
+    "id": 344
   },
   {
     "category": "ml_stats",
@@ -3760,7 +3793,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 342
+    "id": 345
   },
   {
     "category": "ml_stats",
@@ -3771,7 +3804,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 343
+    "id": 346
   },
   {
     "category": "ml_stats",
@@ -3782,7 +3815,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 344
+    "id": 347
   },
   {
     "category": "ml_stats",
@@ -3793,7 +3826,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 345
+    "id": 348
   },
   {
     "category": "ml_stats",
@@ -3804,7 +3837,7 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 346
+    "id": 349
   },
   {
     "category": "ml_stats",
@@ -3815,6 +3848,6 @@ window.QUESTIONS_DATA = [
     "code_sql": "",
     "code_java": "",
     "code_python": "",
-    "id": 347
+    "id": 350
   }
 ];
